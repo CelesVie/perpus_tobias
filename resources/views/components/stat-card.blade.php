@@ -2,23 +2,23 @@
 
 @php
     $tones = [
-        'default' => 'bg-primary-ghost text-primary',
-        'accent' => 'bg-accent-soft text-accent',
-        'warn' => 'bg-amber-50 text-amber-700',
-        'danger' => 'bg-red-50 text-red-600',
+        'default' => 'text-black',
+        'accent' => 'text-black',
+        'warn' => 'text-black',
+        'danger' => 'text-accent',
     ];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'panel']) }}>
+<div {{ $attributes->merge(['class' => 'border-y border-black py-5']) }}>
     <div class="flex items-start justify-between gap-3">
         <div>
-            <p class="text-xs font-semibold tracking-wide text-muted uppercase">{{ $label }}</p>
-            <p class="mt-2 font-display text-3xl font-semibold">{{ $value }}</p>
+            <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">{{ $label }}</p>
+            <p class="mt-3 font-serif-display text-4xl font-bold leading-none tracking-tight sm:text-5xl">{{ $value }}</p>
             @if ($hint)
                 <p class="mt-1 text-xs text-muted">{{ $hint }}</p>
             @endif
         </div>
-        <span class="grid size-10 place-items-center rounded-lg {{ $tones[$tone] ?? $tones['default'] }}">
+        <span class="border-l border-black pl-3 {{ $tones[$tone] ?? $tones['default'] }}">
             <x-icon :name="$icon" class="size-5" />
         </span>
     </div>

@@ -1,8 +1,9 @@
 <x-layouts.guest title="Daftar anggota">
-    <h1 class="font-display text-3xl font-semibold">Daftar sebagai anggota</h1>
-    <p class="mt-2 text-sm text-muted">Gratis. Anda bisa langsung mengajukan peminjaman setelah akun dibuat.</p>
+    <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">Keanggotaan</p>
+    <h1 class="mt-4 font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-6xl">Daftar sebagai anggota</h1>
+    <p class="mt-5 text-base text-muted">Gratis. Anda bisa langsung mengajukan peminjaman setelah akun dibuat.</p>
 
-    <form method="POST" action="{{ route('register.store') }}" class="mt-7 space-y-5">
+    <form method="POST" action="{{ route('register.store') }}" class="mt-10 space-y-6">
         @csrf
 
         <div>
@@ -50,7 +51,7 @@
         <button type="submit" class="btn-primary w-full">Buat akun</button>
     </form>
 
-    <p class="mt-6 text-sm text-muted">
+    <p class="mt-8 border-t border-black pt-5 text-sm text-muted">
         Sudah punya akun? <a href="{{ route('login') }}" class="link">Masuk</a>
     </p>
 </x-layouts.guest>

@@ -1,9 +1,9 @@
 <x-layouts.member title="Dasbor anggota">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <p class="eyebrow">Selamat datang</p>
-            <h1 class="mt-1.5 font-display text-2xl font-semibold sm:text-3xl">{{ auth()->user()->name }}</h1>
-            <p class="mt-1 text-sm text-muted">
+            <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">Selamat datang</p>
+            <h1 class="mt-3 font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">{{ auth()->user()->name }}</h1>
+            <p class="mt-5 text-base text-muted">
                 Anggota sejak {{ auth()->user()->joined_at?->translatedFormat('F Y') ?? now()->translatedFormat('F Y') }}.
                 Batas pinjam {{ $loanLimit }} buku, durasi {{ $loanDays }} hari.
             </p>
@@ -13,7 +13,7 @@
         </a>
     </div>
 
-    <div class="mt-6 grid gap-4 sm:grid-cols-3">
+    <div class="mt-10 grid gap-x-6 gap-y-3 border-y border-black sm:grid-cols-3">
         <x-stat-card label="Pinjaman aktif" :value="$active->count()" icon="book-marked" tone="accent"
             :hint="'dari batas '.$loanLimit.' buku'" />
         <x-stat-card label="Menunggu persetujuan" :value="$pending->count()" icon="clock" tone="warn" />
@@ -21,9 +21,9 @@
             :tone="$unpaidFine > 0 ? 'danger' : 'default'" :hint="'Rp'.number_format($finePerDay, 0, ',', '.').' / hari'" />
     </div>
 
-    <section class="mt-8">
+    <section class="mt-12 border-t border-black pt-8">
         <div class="flex items-center justify-between">
-            <h2 class="font-display text-lg font-semibold">Sedang dipinjam</h2>
+            <h2 class="font-serif-display text-3xl font-bold leading-none tracking-tight">Sedang dipinjam</h2>
             <a href="{{ route('member.borrowings.index') }}" class="link text-sm">Semua peminjaman</a>
         </div>
 
@@ -34,11 +34,11 @@
                 </x-empty-state>
             </div>
         @else
-            <ul class="mt-4 space-y-3">
+            <ul class="mt-5 divide-y divide-black border-y border-black">
                 @foreach ($active as $borrowing)
                     @php $late = $borrowing->isOverdue(); @endphp
-                    <li class="card flex flex-wrap items-center gap-4 p-4">
-                        <x-book-cover :book="$borrowing->book" class="h-20 w-14 rounded-md" />
+                    <li class="flex flex-wrap items-center gap-4 py-4">
+                        <x-book-cover :book="$borrowing->book" class="h-20 w-14 rounded-none" />
                         <div class="min-w-0 flex-1">
                             <a href="{{ route('member.borrowings.show', $borrowing) }}" class="line-clamp-1 font-semibold hover:text-accent">
                                 {{ $borrowing->book->title }}
@@ -58,11 +58,11 @@
     </section>
 
     @if ($pending->isNotEmpty())
-        <section class="mt-8">
-            <h2 class="font-display text-lg font-semibold">Menunggu persetujuan</h2>
-            <ul class="mt-4 space-y-3">
+        <section class="mt-12 border-t border-black pt-8">
+            <h2 class="font-serif-display text-3xl font-bold leading-none tracking-tight">Menunggu persetujuan</h2>
+            <ul class="mt-5 divide-y divide-black border-y border-black">
                 @foreach ($pending as $borrowing)
-                    <li class="card flex flex-wrap items-center gap-3 p-4">
+                    <li class="flex flex-wrap items-center gap-3 py-4">
                         <div class="min-w-0 flex-1">
                             <p class="line-clamp-1 text-sm font-semibold">{{ $borrowing->book->title }}</p>
                             <p class="text-xs text-muted">Diajukan {{ $borrowing->requested_at->diffForHumans() }}</p>
@@ -75,9 +75,9 @@
         </section>
     @endif
 
-    <section class="mt-8">
-        <h2 class="font-display text-lg font-semibold">Rekomendasi untuk Anda</h2>
-        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+    <section class="mt-12 border-t border-black pt-8">
+        <h2 class="font-serif-display text-3xl font-bold leading-none tracking-tight">Rekomendasi untuk Anda</h2>
+        <div class="mt-5 grid gap-6 border-t border-black pt-5 sm:grid-cols-2">
             @forelse ($recommended as $book)
                 <x-book-card :book="$book" compact />
             @empty

@@ -80,7 +80,7 @@
 
     .field {
         @apply w-full rounded-none border border-black bg-white px-3.5 py-2.5 text-sm text-ink
-            placeholder:text-muted focus:border-black focus:ring-1 focus:ring-black focus:outline-none;
+            placeholder:text-muted focus:border-black focus:outline-none;
     }
 
     .field-error {
@@ -100,11 +100,11 @@
     }
 
     .card {
-        @apply rounded-none border border-line bg-surface;
+        @apply rounded-none border-t border-black bg-white;
     }
 
     .panel {
-        @apply rounded-none border border-line bg-surface p-5 sm:p-6;
+        @apply rounded-none border-y border-black bg-white p-5 sm:p-6;
     }
 
     .badge {
