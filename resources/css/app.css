@@ -4,19 +4,20 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-    --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', Inter, ui-sans-serif, system-ui, sans-serif;
+    --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-serif-display: 'Playfair Display', Georgia, serif;
 
-    --color-paper: #faf9f6;
+    --color-paper: #ffffff;
     --color-surface: #ffffff;
-    --color-primary: #243447;
-    --color-primary-soft: #35485e;
-    --color-primary-ghost: #eef1f4;
-    --color-accent: #4f8a83;
-    --color-accent-soft: #e6f0ee;
-    --color-ink: #252a30;
-    --color-muted: #6b7280;
-    --color-line: #e5e7eb;
+    --color-primary: #000000;
+    --color-primary-soft: #252525;
+    --color-primary-ghost: #e8e5df;
+    --color-accent: #9d3327;
+    --color-accent-soft: #f2e8e5;
+    --color-ink: #000000;
+    --color-muted: #77736d;
+    --color-line: #d5d2cc;
 }
 
 @layer base {
@@ -26,20 +27,20 @@
     }
 
     body {
-        @apply bg-paper text-ink font-sans leading-relaxed font-normal antialiased;
+        @apply bg-paper text-ink font-sans leading-relaxed font-normal;
     }
 
     h1,
     h2 {
-        @apply font-sans font-semibold tracking-tight text-ink;
+        @apply font-serif-display font-bold leading-none tracking-tight text-ink;
     }
 
     ::selection {
-        @apply bg-accent/20;
+        @apply bg-accent text-white;
     }
 
     :focus-visible {
-        @apply outline-2 outline-offset-2 outline-accent;
+        @apply outline-2 outline-offset-2 outline-black;
     }
 
     [x-cloak] {
@@ -48,29 +49,29 @@
 }
 
 @utility btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition
+    @apply inline-flex items-center justify-center gap-2 rounded-none border border-black px-4 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase transition-colors
         duration-150 disabled:pointer-events-none disabled:opacity-50;
 }
 
 @layer components {
     .btn-primary {
-        @apply btn bg-primary text-white hover:bg-primary-soft;
+        @apply btn bg-black text-white hover:bg-white hover:text-black;
     }
 
     .btn-accent {
-        @apply btn bg-accent text-white hover:bg-accent/90;
+        @apply btn border-accent bg-accent text-white hover:bg-white hover:text-accent;
     }
 
     .btn-outline {
-        @apply btn border border-line bg-surface text-ink hover:border-primary/40 hover:bg-primary-ghost;
+        @apply btn bg-white text-black hover:bg-black hover:text-white;
     }
 
     .btn-ghost {
-        @apply btn text-muted hover:bg-primary-ghost hover:text-ink;
+        @apply btn border-transparent text-black underline underline-offset-4 hover:bg-primary-ghost;
     }
 
     .btn-danger {
-        @apply btn border border-red-200 bg-red-50 text-red-700 hover:bg-red-100;
+        @apply btn border-accent text-accent hover:bg-accent hover:text-white;
     }
 
     .btn-sm {
@@ -78,12 +79,12 @@
     }
 
     .field {
-        @apply w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-sm text-ink
-            placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/20 focus:outline-none;
+        @apply w-full rounded-none border border-black bg-white px-3.5 py-2.5 text-sm text-ink
+            placeholder:text-muted focus:border-black focus:ring-1 focus:ring-black focus:outline-none;
     }
 
     .field-error {
-        @apply border-red-300 focus:border-red-400 focus:ring-red-200;
+        @apply border-accent focus:border-accent focus:ring-accent;
     }
 
     .label {
@@ -99,15 +100,15 @@
     }
 
     .card {
-        @apply rounded-xl border border-line bg-surface;
+        @apply rounded-none border border-line bg-surface;
     }
 
     .panel {
-        @apply rounded-xl border border-line bg-surface p-5 sm:p-6;
+        @apply rounded-none border border-line bg-surface p-5 sm:p-6;
     }
 
     .badge {
-        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold;
+        @apply inline-flex items-center gap-1 border border-black px-2.5 py-1 text-[10px] font-semibold tracking-widest uppercase;
     }
 
     .table-base {
@@ -115,11 +116,11 @@
     }
 
     .table-base thead th {
-        @apply border-b border-line px-4 py-3 text-xs font-semibold tracking-wide text-muted uppercase;
+        @apply border-b border-black px-4 py-3 text-[10px] font-semibold tracking-widest text-muted uppercase;
     }
 
     .table-base tbody td {
-        @apply border-b border-line/70 px-4 py-3.5 align-middle;
+        @apply border-b border-line px-4 py-3.5 align-middle;
     }
 
     .table-base tbody tr:last-child td {
@@ -127,19 +128,19 @@
     }
 
     .table-base tbody tr:hover {
-        @apply bg-paper/80;
+        @apply bg-primary-ghost;
     }
 
     .link {
-        @apply font-medium text-accent underline-offset-4 hover:underline;
+        @apply font-medium text-black underline underline-offset-4 hover:text-accent;
     }
 
     .eyebrow {
-        @apply text-xs font-bold tracking-[0.18em] text-accent uppercase;
+        @apply text-[10px] font-semibold tracking-[0.15em] text-muted uppercase;
     }
 
     .display {
-        @apply font-sans font-semibold tracking-tight text-ink;
+        @apply font-serif-display font-bold leading-none tracking-tight text-ink;
     }
 }
 

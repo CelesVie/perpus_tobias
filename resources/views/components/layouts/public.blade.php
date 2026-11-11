@@ -5,56 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Pustaka Nusantara' }}</title>
     <meta name="description" content="{{ $description ?? 'Katalog dan layanan Perpustakaan Pustaka Nusantara.' }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen flex flex-col">
 
-<header class="sticky top-0 z-40 border-b border-line/80 bg-paper/90 backdrop-blur">
-    <div class="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
-        <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-            <span class="grid size-9 place-items-center rounded-lg bg-primary text-white">
-                <x-icon name="library" class="size-5" />
-            </span>
-            <span class="leading-tight">
-                <span class="block font-display text-lg font-semibold">Pustaka</span>
-                <span class="block text-[10px] font-semibold tracking-[0.2em] text-muted uppercase">Nusantara</span>
-            </span>
+<header class="border-b border-black bg-white">
+    <div class="mx-auto flex min-h-20 max-w-screen-2xl flex-wrap items-center gap-x-10 gap-y-4 px-5 py-5 sm:px-8 lg:px-12">
+        <a href="{{ route('home') }}" class="font-serif-display text-4xl font-bold leading-none tracking-tight sm:text-5xl" aria-label="Pustaka Nusantara — Beranda">
+            Pustaka<span class="ml-2 align-middle font-sans text-[10px] font-semibold tracking-[0.15em] uppercase">Nusantara</span>
         </a>
 
-        <nav class="hidden items-center gap-1 text-sm md:flex" aria-label="Navigasi utama">
-            <a href="{{ route('home') }}" class="rounded-lg px-3 py-2 font-medium {{ request()->routeIs('home') ? 'bg-primary-ghost text-ink' : 'text-muted hover:text-ink' }}">Beranda</a>
-            <a href="{{ route('books.index') }}" class="rounded-lg px-3 py-2 font-medium {{ request()->routeIs('books.*') ? 'bg-primary-ghost text-ink' : 'text-muted hover:text-ink' }}">Katalog</a>
-            <a href="{{ route('categories.index') }}" class="rounded-lg px-3 py-2 font-medium {{ request()->routeIs('categories.*') ? 'bg-primary-ghost text-ink' : 'text-muted hover:text-ink' }}">Kategori</a>
-            <a href="{{ route('about') }}" class="rounded-lg px-3 py-2 font-medium {{ request()->routeIs('about') ? 'bg-primary-ghost text-ink' : 'text-muted hover:text-ink' }}">Tentang</a>
+        <nav class="order-3 flex w-full items-center gap-x-7 md:order-none md:w-auto" aria-label="Navigasi utama">
+            <a href="{{ route('home') }}" @class(['font-sans text-[10px] font-semibold tracking-[0.15em] uppercase underline underline-offset-4' => request()->routeIs('home'), 'font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase hover:text-black' => ! request()->routeIs('home')])>Beranda</a>
+            <a href="{{ route('books.index') }}" @class(['font-sans text-[10px] font-semibold tracking-[0.15em] uppercase underline underline-offset-4' => request()->routeIs('books.*'), 'font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase hover:text-black' => ! request()->routeIs('books.*')])>Katalog</a>
+            <a href="{{ route('categories.index') }}" @class(['font-sans text-[10px] font-semibold tracking-[0.15em] uppercase underline underline-offset-4' => request()->routeIs('categories.*'), 'font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase hover:text-black' => ! request()->routeIs('categories.*')])>Kategori</a>
+            <a href="{{ route('about') }}" @class(['font-sans text-[10px] font-semibold tracking-[0.15em] uppercase underline underline-offset-4' => request()->routeIs('about'), 'font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase hover:text-black' => ! request()->routeIs('about')])>Tentang</a>
         </nav>
 
-        <div class="ml-auto flex items-center gap-2">
+        <div class="ml-auto flex items-center gap-4">
             @auth
-                <a href="{{ route('dashboard') }}" class="btn-outline btn-sm">
-                    <x-icon name="layout-dashboard" class="size-4" />
-                    <span class="hidden sm:inline">Dasbor</span>
-                </a>
+                <a href="{{ route('dashboard') }}" class="font-sans text-[10px] font-semibold tracking-[0.15em] uppercase underline underline-offset-4">Dasbor</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="btn-ghost btn-sm" type="submit">
-                        <x-icon name="log-out" class="size-4" />
-                        <span class="hidden sm:inline">Keluar</span>
-                    </button>
+                    <button class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase hover:text-accent" type="submit">Keluar</button>
                 </form>
             @else
-                <a href="{{ route('login') }}" class="btn-ghost btn-sm">Masuk</a>
-                <a href="{{ route('register') }}" class="btn-primary btn-sm">Daftar Anggota</a>
+                <a href="{{ route('login') }}" class="font-sans text-[10px] font-semibold tracking-[0.15em] uppercase">Masuk</a>
+                <a href="{{ route('register') }}" class="border border-black bg-black px-3 py-2 font-sans text-[10px] font-semibold tracking-[0.15em] text-white uppercase hover:bg-white hover:text-black">Daftar Anggota</a>
             @endauth
         </div>
-    </div>
-
-    <div class="border-t border-line md:hidden">
-        <nav class="no-scrollbar mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 text-sm" aria-label="Navigasi seluler">
-            <a href="{{ route('home') }}" class="shrink-0 rounded-lg px-3 py-1.5 font-medium text-muted">Beranda</a>
-            <a href="{{ route('books.index') }}" class="shrink-0 rounded-lg px-3 py-1.5 font-medium text-muted">Katalog</a>
-            <a href="{{ route('categories.index') }}" class="shrink-0 rounded-lg px-3 py-1.5 font-medium text-muted">Kategori</a>
-            <a href="{{ route('about') }}" class="shrink-0 rounded-lg px-3 py-1.5 font-medium text-muted">Tentang</a>
-        </nav>
     </div>
 </header>
 
@@ -64,10 +46,10 @@
     {{ $slot }}
 </main>
 
-<footer class="mt-16 border-t border-line bg-surface">
-    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4">
+<footer class="mt-20 border-t border-black bg-white">
+    <div class="mx-auto grid max-w-screen-2xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-4 lg:px-12">
         <div class="md:col-span-2">
-            <p class="font-display text-xl font-semibold">Pustaka Nusantara</p>
+            <p class="font-serif-display text-3xl font-bold leading-none tracking-tight">Pustaka Nusantara</p>
             <p class="mt-2 max-w-sm text-sm text-muted">{{ \App\Models\Setting::get('library_tagline') }}</p>
             <p class="mt-4 text-sm text-muted">{{ \App\Models\Setting::get('library_address') }}</p>
         </div>
@@ -87,7 +69,7 @@
             </ul>
         </div>
     </div>
-    <div class="border-t border-line px-4 py-4 text-center text-xs text-muted">
+    <div class="border-t border-black px-5 py-4 text-center font-sans text-[10px] tracking-[0.15em] text-muted uppercase">
         &copy; {{ now()->year }} Pustaka Nusantara. Dibangun untuk kebutuhan UKK.
     </div>
 </footer>

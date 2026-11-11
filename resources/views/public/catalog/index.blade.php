@@ -4,11 +4,11 @@
     <x-page-header name="Katalog" title="Katalog buku"
         description="Telusuri koleksi berdasarkan kata kunci, kategori, penulis, penerbit, atau tahun terbit." />
 
-    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[260px_1fr]">
+    <div class="mx-auto grid max-w-screen-2xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[280px_1fr] lg:px-12">
         <aside>
-            <form method="GET" action="{{ url()->current() }}" class="panel space-y-5" x-data="{ open: false }">
+            <form method="GET" action="{{ url()->current() }}" class="space-y-5 border-y border-black py-6" x-data="{ open: false }">
                 <div class="flex items-center justify-between">
-                    <p class="text-sm font-semibold">Filter koleksi</p>
+                    <p class="font-sans text-[10px] font-semibold tracking-[0.15em] uppercase">Filter koleksi</p>
                     <button type="button" class="btn-ghost btn-sm lg:hidden" @click="open = !open" aria-controls="filter-body">
                         <x-icon name="filter" class="size-4" /> Filter
                     </button>
@@ -108,7 +108,7 @@
                     </x-empty-state>
                 </div>
             @else
-                <div class="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                <div class="mt-6 grid gap-x-5 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach ($books as $book)
                         <x-book-card :book="$book" />
                     @endforeach
