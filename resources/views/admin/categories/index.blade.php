@@ -1,13 +1,14 @@
 <x-layouts.admin title="Kategori" heading="Kategori">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="font-display text-2xl font-semibold">Kategori</h1>
-            <p class="mt-1 text-sm text-muted">Kelompokkan koleksi agar mudah ditelusuri.</p>
+            <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">Koleksi / Taksonomi</p>
+            <h1 class="mt-3 font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Kategori</h1>
+            <p class="mt-5 text-base text-muted">Kelompokkan koleksi agar mudah ditelusuri.</p>
         </div>
     </div>
 
-    <div class="mt-5 grid gap-5 lg:grid-cols-[1fr_340px]">
-        <div class="card overflow-x-auto">
+    <div class="mt-10 grid gap-10 lg:grid-cols-[1fr_340px]">
+        <div class="overflow-x-auto border-y border-black">
             @if ($categories->isEmpty())
                 <div class="p-6"><x-empty-state title="Belum ada kategori" icon="tags" /></div>
             @else
@@ -29,9 +30,9 @@
                                     </div>
 
                                     <div x-show="edit" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-primary/50 p-4 text-left">
-                                        <div class="w-full max-w-md rounded-xl bg-surface p-5" @click.outside="edit = false">
+                                        <div class="w-full max-w-md border border-black bg-white p-6" @click.outside="edit = false">
                                             <div class="flex items-center justify-between">
-                                                <h2 class="font-display text-lg font-semibold">Ubah kategori</h2>
+                                                <h2 class="font-serif-display text-3xl font-bold leading-none tracking-tight">Ubah kategori</h2>
                                                 <button @click="edit = false" aria-label="Tutup"><x-icon name="x" class="size-5" /></button>
                                             </div>
                                             <form method="POST" action="{{ route('admin.categories.update', $category) }}" class="mt-4 space-y-4">
@@ -53,13 +54,13 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="border-t border-line px-4 py-3">{{ $categories->links() }}</div>
+                <div class="border-t border-black px-4 py-3">{{ $categories->links() }}</div>
             @endif
         </div>
 
-        <form method="POST" action="{{ route('admin.categories.store') }}" class="panel h-fit space-y-4">
+        <form method="POST" action="{{ route('admin.categories.store') }}" class="h-fit space-y-5 border-y border-black py-6">
             @csrf
-            <h2 class="font-display text-lg font-semibold">Kategori baru</h2>
+            <h2 class="font-serif-display text-3xl font-bold leading-none tracking-tight">Kategori baru</h2>
             <div>
                 <label class="label" for="name">Nama</label>
                 <input id="name" name="name" value="{{ old('name') }}" required class="field @error('name') field-error @enderror">

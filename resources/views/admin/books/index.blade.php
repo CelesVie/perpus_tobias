@@ -1,18 +1,19 @@
 <x-layouts.admin title="Manajemen buku" heading="Buku">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="font-display text-2xl font-semibold">Manajemen buku</h1>
-            <p class="mt-1 text-sm text-muted">Tambah, ubah, dan hapus judul koleksi.</p>
+            <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">Koleksi / Inventaris</p>
+            <h1 class="mt-3 font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Manajemen buku</h1>
+            <p class="mt-5 text-base text-muted">Tambah, ubah, dan hapus judul koleksi.</p>
         </div>
         <a href="{{ route('admin.books.create') }}" class="btn-primary btn-sm"><x-icon name="plus" class="size-4" /> Tambah buku</a>
     </div>
 
-    <form method="GET" class="mt-5 flex max-w-md gap-2">
+    <form method="GET" class="mt-8 flex max-w-2xl gap-2 border-y border-black py-4">
         <input name="q" value="{{ $term }}" class="field" placeholder="Cari judul, penulis, ISBN" aria-label="Cari buku">
         <button class="btn-outline" type="submit"><x-icon name="search" class="size-4" /> Cari</button>
     </form>
 
-    <div class="mt-5 card overflow-x-auto">
+    <div class="mt-8 overflow-x-auto border-y border-black">
         @if ($books->isEmpty())
             <div class="p-6"><x-empty-state title="Belum ada buku" description="Tambahkan judul pertama ke katalog." icon="book-open" /></div>
         @else
@@ -50,7 +51,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="border-t border-line px-4 py-3">{{ $books->links() }}</div>
+            <div class="border-t border-black px-4 py-3">{{ $books->links() }}</div>
         @endif
     </div>
 </x-layouts.admin>

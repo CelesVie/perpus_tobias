@@ -2,20 +2,18 @@
     <x-page-header name="Kategori" title="Kategori koleksi"
         description="Rak kami dikelompokkan agar mudah ditelusuri. Pilih kategori untuk melihat judul di dalamnya." />
 
-    <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div class="mx-auto max-w-screen-2xl px-5 py-12 sm:px-8 lg:px-12">
         @if ($categories->isEmpty())
             <x-empty-state title="Belum ada kategori" icon="tags" />
         @else
-            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-x-8 gap-y-0 divide-y divide-black border-y border-black sm:grid-cols-2 sm:divide-y-0">
                 @foreach ($categories as $category)
-                    <a href="{{ route('categories.show', $category) }}" class="card group p-5 transition hover:border-accent/50 hover:bg-accent-soft/30">
+                    <a href="{{ route('categories.show', $category) }}" class="group border-b border-black py-6 transition-colors hover:bg-primary-ghost/40 sm:border-b-0 sm:border-r sm:pr-6">
                         <div class="flex items-start justify-between gap-3">
-                            <span class="grid size-10 place-items-center rounded-lg bg-primary-ghost text-primary transition group-hover:bg-accent group-hover:text-white">
-                                <x-icon name="tags" class="size-5" />
-                            </span>
-                            <span class="badge bg-paper text-muted">{{ $category->books_count }} judul</span>
+                            <span class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">Kategori</span>
+                            <span class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">{{ $category->books_count }} judul</span>
                         </div>
-                        <h2 class="mt-4 font-display text-lg font-semibold">{{ $category->name }}</h2>
+                        <h2 class="mt-5 font-serif-display text-3xl font-bold leading-none tracking-tight">{{ $category->name }}</h2>
                         <p class="mt-1 line-clamp-2 text-sm text-muted">{{ $category->description }}</p>
                     </a>
                 @endforeach

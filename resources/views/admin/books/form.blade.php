@@ -2,13 +2,14 @@
 
 <x-layouts.admin :title="$editing ? 'Ubah buku' : 'Tambah buku'" :heading="$editing ? 'Ubah buku' : 'Tambah buku'">
     <div class="max-w-3xl">
-        <h1 class="font-display text-2xl font-semibold">{{ $editing ? 'Ubah buku' : 'Tambah buku baru' }}</h1>
-        <p class="mt-1 text-sm text-muted">
+        <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">Koleksi / Metadata</p>
+        <h1 class="mt-3 font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">{{ $editing ? 'Ubah buku' : 'Tambah buku baru' }}</h1>
+        <p class="mt-5 text-base text-muted">
             {{ $editing ? 'Perbarui metadata koleksi. Eksemplar tersedia dihitung ulang otomatis.' : 'Lengkapi metadata buku sebelum menyimpan.' }}
         </p>
 
         <form method="POST" action="{{ $editing ? route('admin.books.update', $book) : route('admin.books.store') }}"
-              enctype="multipart/form-data" class="mt-6 space-y-5 panel">
+              enctype="multipart/form-data" class="mt-8 space-y-7 border-y border-black py-6">
             @csrf
             @if ($editing) @method('PUT') @endif
 
@@ -42,15 +43,15 @@
                 </div>
             </div>
 
-            <fieldset>
+            <fieldset class="border-y border-black py-4">
                 <legend class="label">Penulis</legend>
                 @php $selectedAuthors = collect(old('author_ids', $book->authors->pluck('id')->all()))->map(fn ($id) => (int) $id); @endphp
-                <div class="max-h-44 space-y-1 overflow-y-auto rounded-lg border border-line p-3">
+                <div class="max-h-44 space-y-1 overflow-y-auto border border-black p-3">
                     @foreach ($authors as $author)
                         <label class="flex items-center gap-2 text-sm">
                             <input type="checkbox" name="author_ids[]" value="{{ $author->id }}"
                                    @checked($selectedAuthors->contains($author->id))
-                                   class="size-4 rounded border-line text-accent focus:ring-accent">
+                                   class="size-4 rounded-none border-black text-black focus:ring-black">
                             {{ $author->name }}
                         </label>
                     @endforeach
@@ -103,7 +104,7 @@
 
             <label class="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="is_featured" value="1" @checked(old('is_featured', $book->is_featured))
-                       class="size-4 rounded border-line text-accent focus:ring-accent">
+                       class="size-4 rounded-none border-black text-black focus:ring-black">
                 Tampilkan sebagai pilihan di beranda
             </label>
 
