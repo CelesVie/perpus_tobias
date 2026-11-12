@@ -1,58 +1,160 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📚 PUSTAKA — Sistem Informasi Perpustakaan Web
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Web manajemen perpustakaan modern dengan arsitektur backend yang rapi, alur sirkulasi buku lengkap, dan visual bergaya **Brutalist / Editorial** yang anti-mainstream.
 
-## About Laravel
+Dibuat untuk kebutuhan tugas akhir / UKK RPL dan portofolio magang, web ini mengutamakan kerapian arsitektur kode (*clean code*), pemisahan logika bisnis yang jelas (*Service Layer*), serta pengalaman pengguna (UX) yang cepat dan informatif.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tech Stack & Alasan Pemilihan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Teknologi | Peran | Alasan Pemilihan |
+| :--- | :--- | :--- |
+| **Laravel 12 (PHP 8.4)** | Backend Framework | Standar industri untuk web modern; routing ekspresif, ekosistem solid, dan Eloquent ORM yang memudahkan query relasional kompleks. |
+| **MySQL** | Relational Database | Manajemen data terstruktur dengan integritas foreign key untuk buku, relasi penulis/penerbit, sirkulasi peminjaman, dan denda. |
+| **Tailwind CSS v4** | Styling Engine | Engine CSS utility-first generasi terbaru yang super cepat, memungkinkan implementasi desain Brutalist/Editorial murni tanpa library CSS tambahan. |
+| **Alpine.js** | Micro JS Framework | Interaktivitas komponen UI (modal konfirmasi, dropdown menu, tabs) tetap responsif dan interaktif tanpa overhead bundle JavaScript yang berat. |
+| **Vite** | Frontend Asset Bundler | Hot Module Replacement (HMR) instan dan kompilasi stylesheet ultra-cepat. |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Fitur Andalan
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- 🔄 **Sirkulasi Peminjaman End-to-End**  
+  Member dapat mengajukan peminjaman secara mandiri lewat katalog. Admin memvalidasi (setujui / tolak dengan alasan), mencatat tanggal kembali, dan stok buku otomatis tersinkronisasi.
+- 💰 **Kalkulasi Denda Otomatis**  
+  Sistem menghitung hari keterlambatan secara otomatis terhadap tanggal jatuh tempo (*due date*) dan mengalikan dengan tarif denda harian yang fleksibel diatur dari menu pengaturan.
+- 👥 **Role-Based Access Control (RBAC)**  
+  Pemisahan akses tegas antara **Pustakawan (Admin)** dan **Anggota (Member)** melalui middleware:
+  - **Admin**: Dashboard statistik, manajemen buku & kategori, approval peminjaman, pencatatan pengembalian, status denda, dan ekspor laporan.
+  - **Member**: Akses katalog publik, detail buku, booking peminjaman, pemantauan status pinjam, serta riwayat denda pribadi.
+- 📰 **Desain UI/UX Brutalist & Editorial**  
+  Berbeda dari dashboard template Bootstrap konvensional, web ini mengusung estetika editorial surat kabar & gaya brutalisme: border tegas (`border-2 border-black`), kontras tinggi, grid presisi, dan tipografi monospaced/serif yang unik.
+- 📦 **Master Data & Relasi Lengkap**  
+  Mendukung katalog buku komprehensif: multi-penulis (*many-to-many*), penerbit, kategori, tahun terbit, halaman, status ketersediaan, serta pencarian & filter cepat.
+- 📊 **Statistik & Audit Log Rapi**  
+  Dashboard admin menyajikan metrik buku aktif, peminjaman pending, buku terlambat, serta total denda tertunggak secara real-time.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 💻 Cara Install & Menjalankan di Lokal
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Ikuti langkah-langkah *step-by-step* di terminal:
 
+### 1. Clone Repository & Masuk ke Folder
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-repository-kamu>
+cd perpustakaan_tobias
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Install Dependensi PHP
+```bash
+composer install
+```
 
-## Contributing
+### 3. Konfigurasi Environment (`.env`)
+Salin file konfigurasi contoh:
+```bash
+cp .env.example .env
+```
+Buka file `.env` dan sesuaikan koneksi database MySQL kamu:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pustaka_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+*(Pastikan database `pustaka_db` sudah dibuat di MySQL/phpMyAdmin)*
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Generate App Key
+```bash
+php artisan key:generate
+```
 
-## Code of Conduct
+### 5. Migrasi & Seeding Data Dummy
+Jalankan migrasi tabel beserta seeder data awal (buku, penulis, penerbit, akun admin, member, dan riwayat contoh):
+```bash
+php artisan migrate --seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 6. Install Dependensi Frontend & Build Vite
+> ⚠️ **Penting:** Aplikasi ini menggunakan Tailwind CSS v4. Kamu **wajib** melakukan build aset frontend agar seluruh styling editorial dan layout brutalist tampil sempurna!
 
-## Security Vulnerabilities
+```bash
+# Install paket JS
+npm install
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Build aset untuk produksi
+npm run build
+```
+*Tips: Jika sedang mengembangkan tampilan, jalankan `npm run dev` untuk hot-reload.*
 
-## License
+### 7. Jalankan Server Lokal
+```bash
+php artisan serve
+```
+Buka browser dan akses: `http://127.0.0.1:8000`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🔑 Akun Demo (Default Seeder)
+
+Setelah menjalankan `php artisan migrate --seed`, akun berikut siap digunakan untuk testing:
+
+| Role | Email | Password | Hak Akses |
+| :--- | :--- | :--- | :--- |
+| **Admin / Pustakawan** | `admin@pustaka.test` | `password` | Akses penuh dashboard `/admin`, sirkulasi, buku, dan laporan |
+| **Member / Anggota** | `bagas.prakoso@example.test` | `password` | Akses dashboard `/member`, peminjaman, dan riwayat |
+
+---
+
+## 📁 Struktur Folder & Arsitektur Kode
+
+Project ini menerapkan pola **Clean Architecture / Fat Service, Skinny Controller** agar kode mudah dipahami, dites, dan dikembangkan:
+
+```
+perpustakaan_tobias/
+├── app/
+│   ├── Enums/                 # Enum status (BorrowingStatus, FineStatus, UserRole)
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/         # Controller spesifik panel admin (Buku, Sirkulasi, Denda, Laporan)
+│   │   │   ├── Member/        # Controller spesifik panel member (Koleksi, Pinjaman, Profil)
+│   │   │   └── Auth/          # Login, Register, Logout
+│   │   └── Requests/          # Form Request Validation (validasi input terpisah dari controller)
+│   ├── Models/                # Model Eloquent dengan relasi & scope query
+│   └── Services/              # 🧠 Core Business Logic (Service Layer)
+│       ├── BorrowingService.php        # Logic validasi peminjaman, approval, batas waktu & kalkulasi denda
+│       ├── BookCatalogService.php      # Logic pencarian, filter kategori, dan ketersediaan stok
+│       └── LibrarySettingsService.php  # Konfigurasi tarif denda & durasi pinjam dinamis
+├── database/
+│   ├── migrations/            # Skema tabel database
+│   └── seeders/               # Data dummy realistis (LibrarySeeder)
+├── resources/
+│   ├── css/app.css            # Setup Tailwind CSS v4 & custom token tema editorial
+│   └── views/
+│       ├── admin/             # View Blade halaman admin
+│       ├── member/            # View Blade halaman member
+│       ├── public/            # Halaman katalog terbuka & landing page
+│       └── components/        # Reusable Blade components (layouts, navbar, badge, modal)
+└── routes/
+    └── web.php                # Definisi rute yang dikelompokkan rapi per role & middleware
+```
+
+### Mengapa menggunakan `app/Services/`?
+Alih-alih menumpuk ratusan baris query dan kalkulasi matematika di dalam Controller, seluruh alur peminjaman buku dan hitungan denda dipusatkan di `BorrowingService.php`. Controller hanya bertugas menerima request HTTP, memanggil Service, dan mengembalikan response atau view. Pola ini membuat kode jauh lebih mudah diuji (*testable*) dan minim bug saat ada perubahan aturan perpustakaan.
+
+---
+
+## 🧪 Testing
+
+Project sudah dilengkapi unit dan feature test otomatis menggunakan PHPUnit:
+```bash
+php artisan test
+```
+
+---
+
+Dibuat dengan dedikasi oleh **Tobias** untuk portofolio UKK RPL & persiapan magang/PKL industri. Feedback dan saran sangat terbuka! 🚀

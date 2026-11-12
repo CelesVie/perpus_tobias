@@ -63,12 +63,12 @@
     <div class="mt-12 grid gap-10 lg:grid-cols-[1.4fr_0.6fr]">
         <div class="border-t border-black pt-5">
             <h2 class="font-serif-display text-3xl font-bold leading-none tracking-tight">Peminjaman 6 bulan terakhir</h2>
-            <div class="mt-6 flex h-40 items-end gap-3">
+            <div class="mt-6 flex h-72 items-end gap-3 border-b border-zinc-300">
                 @php $max = max(1, $monthly->max('total')); @endphp
                 @foreach ($monthly as $month)
-                    <div class="flex flex-1 flex-col items-center gap-2">
+                    <div class="flex h-full min-w-0 flex-1 flex-col items-center gap-2">
                         <div class="flex w-full flex-1 items-end">
-                            <div class="w-full bg-black transition-colors hover:bg-accent"
+                            <div class="min-h-[4px] w-full bg-black"
                                  style="height: {{ max(4, round($month['total'] / $max * 100)) }}%"
                                  title="{{ $month['total'] }} peminjaman"></div>
                         </div>

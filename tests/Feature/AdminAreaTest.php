@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Borrowing;
 use App\Models\Category;
+use App\Models\Fine;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -55,6 +57,18 @@ class AdminAreaTest extends TestCase
             $response = $this->actingAs($admin)->get($page);
             $this->assertSame(200, $response->status(), $page.' returned '.$response->status().' '.$response->getContent());
         }
+    }
+
+    public function test_admin_dashboard_renders_six_visible_monthly_bars(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->get(route('admin.dashboard'));
+
+        $response->assertOk()
+            ->assertSee('h-72 items-end', false)
+            ->assertSee('min-h-[4px]', false);
+        $this->assertSame(6, substr_count($response->getContent(), 'style="height:'));
     }
 
     public function test_admin_can_create_update_and_delete_a_book(): void
@@ -147,6 +161,34 @@ class AdminAreaTest extends TestCase
 
         $response->assertOk();
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
+    }
+
+    public function test_member_history_paginates_fines(): void
+    {
+        $member = User::factory()->create();
+        $category = Category::factory()->create();
+        foreach (range(1, 16) as $index) {
+            $book = Book::factory()->create([
+                'title' => 'History Book '.$index,
+                'category_id' => $category->id,
+            ]);
+            $borrowing = Borrowing::factory()->create([
+                'user_id' => $member->id,
+                'book_id' => $book->id,
+            ]);
+            Fine::factory()->create([
+                'user_id' => $member->id,
+                'borrowing_id' => $borrowing->id,
+            ]);
+        }
+
+        $this->actingAs($member)->get(route('member.history'))
+            ->assertOk()
+            ->assertViewHas('fines', fn ($fines) => $fines->count() === 10 && $fines->total() === 16);
+
+        $this->get(route('member.history', ['fines' => 2]))
+            ->assertOk()
+            ->assertViewHas('fines', fn ($fines) => $fines->count() === 6 && $fines->currentPage() === 2);
     }
 
     public function test_category_crud_from_admin(): void

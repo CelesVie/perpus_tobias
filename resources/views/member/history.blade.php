@@ -22,6 +22,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="border-t border-line px-4 py-3">{{ $fines->links() }}</div>
             @endif
         </div>
     </section>

@@ -16,7 +16,11 @@ class HistoryController extends Controller
                 ->whereIn('status', ['returned', 'rejected', 'cancelled'])
                 ->latest('updated_at')
                 ->paginate(10),
-            'fines' => $request->user()->fines()->with('borrowing.book')->latest()->get(),
+            'fines' => $request->user()->fines()
+                ->with('borrowing.book')
+                ->latest()
+                ->paginate(10, ['*'], 'fines')
+                ->withQueryString(),
         ]);
     }
 }
