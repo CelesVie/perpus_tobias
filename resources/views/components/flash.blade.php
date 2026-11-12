@@ -6,8 +6,8 @@
             x-show="show"
             x-transition.opacity
             role="status"
-            class="pointer-events-auto flex max-w-md items-start gap-3 rounded-xl border px-4 py-3 text-sm shadow-lg
-                {{ session('error') ? 'border-red-200 bg-red-50 text-red-800' : 'border-accent/30 bg-accent-soft text-primary' }}"
+            class="pointer-events-auto flex max-w-md items-start gap-3 rounded-none border border-black px-4 py-3 text-sm
+                {{ session('error') ? 'border-red-600 bg-white text-red-800' : 'border-black bg-white text-black' }}"
         >
             <x-icon :name="session('error') ? 'circle-x' : 'circle-check'" class="mt-0.5 size-5" />
             <p class="flex-1">{{ session('error') ?? session('status') }}</p>

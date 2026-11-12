@@ -3,10 +3,12 @@
         <x-icon name="chevron-left" class="size-4" /> Daftar anggota
     </a>
 
-    <div class="mt-4 grid gap-5 lg:grid-cols-[320px_1fr]">
+    <h1 class="mt-4 font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">{{ $member->name }}</h1>
+
+    <div class="mt-6 grid gap-5 lg:grid-cols-[320px_1fr]">
         <div class="panel h-fit">
             <div class="flex items-center gap-3">
-                <span class="grid size-12 place-items-center rounded-full bg-primary font-display text-lg font-semibold text-white">{{ $member->initials() }}</span>
+                <span class="grid size-12 place-items-center rounded-none border border-black bg-black font-display text-lg font-semibold text-white">{{ $member->initials() }}</span>
                 <div class="min-w-0">
                     <p class="truncate font-semibold">{{ $member->name }}</p>
                     <p class="truncate text-xs text-muted">{{ $member->email }}</p>

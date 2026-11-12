@@ -6,7 +6,7 @@
         <div class="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div class="space-y-8">
                 <section class="panel">
-                    <h2 class="font-display text-xl font-semibold">Tujuan kami</h2>
+                    <h2 class="font-display text-3xl font-bold leading-none tracking-tight sm:text-4xl">Tujuan kami</h2>
                     <p class="mt-3 leading-relaxed text-ink/90">
                         Pustaka Nusantara mengelola {{ number_format($titles, 0, ',', '.') }} judul untuk {{ number_format($members, 0, ',', '.') }} anggota terdaftar.
                         Kami percaya akses bacaan yang mudah adalah awal dari warga yang kritis. Katalog terbuka untuk
@@ -19,7 +19,7 @@
                 </section>
 
                 <section class="panel">
-                    <h2 class="font-display text-xl font-semibold">Aturan peminjaman</h2>
+                    <h2 class="font-display text-3xl font-bold leading-none tracking-tight sm:text-4xl">Aturan peminjaman</h2>
                     <ul class="mt-4 space-y-3 text-sm">
                         @foreach ([
                             'Maksimal '.\App\Models\Setting::get('max_active_loans').' peminjaman aktif per anggota.',

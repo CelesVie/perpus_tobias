@@ -1,6 +1,6 @@
 <x-layouts.member title="Profil saya">
-    <h1 class="font-display text-2xl font-semibold">Profil saya</h1>
-    <p class="mt-1 text-sm text-muted">Perbarui data kontak dan kata sandi akun Anda.</p>
+    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Profil saya</h1>
+    <p class="eyebrow mt-4">Perbarui data kontak dan kata sandi akun Anda.</p>
 
     <div class="mt-6 grid gap-5 lg:grid-cols-[1fr_280px]">
         <form method="POST" action="{{ route('member.profile.update') }}" class="panel space-y-5">
@@ -46,7 +46,7 @@
 
         <aside class="panel h-fit">
             <div class="flex items-center gap-3">
-                <span class="grid size-12 place-items-center rounded-full bg-accent-soft font-display text-lg font-semibold text-primary">
+                <span class="grid size-12 place-items-center rounded-none border border-black bg-white font-display text-lg font-semibold text-black">
                     {{ $user->initials() }}
                 </span>
                 <div class="min-w-0">

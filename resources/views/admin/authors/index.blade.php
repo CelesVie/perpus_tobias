@@ -1,6 +1,6 @@
 <x-layouts.admin title="Penulis" heading="Penulis">
-    <h1 class="font-display text-2xl font-semibold">Penulis</h1>
-    <p class="mt-1 text-sm text-muted">Data penulis dipakai saat menambah buku.</p>
+    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Penulis</h1>
+    <p class="eyebrow mt-4">Data penulis dipakai saat menambah buku.</p>
 
     <div class="mt-5 grid gap-5 lg:grid-cols-[1fr_340px]">
         <div class="card overflow-x-auto">
@@ -27,7 +27,7 @@
                                     </div>
 
                                     <div x-show="edit" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-primary/50 p-4 text-left">
-                                        <div class="w-full max-w-md rounded-xl bg-surface p-5" @click.outside="edit = false">
+                                        <div class="w-full max-w-md border border-black bg-white p-5" @click.outside="edit = false">
                                             <div class="flex items-center justify-between">
                                                 <h2 class="font-display text-lg font-semibold">Ubah penulis</h2>
                                                 <button @click="edit = false" aria-label="Tutup"><x-icon name="x" class="size-5" /></button>

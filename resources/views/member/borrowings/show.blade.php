@@ -2,7 +2,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
             <p class="text-xs font-mono text-muted">{{ $borrowing->code }}</p>
-            <h1 class="mt-1 font-display text-2xl font-semibold">Detail peminjaman</h1>
+            <h1 class="mt-2 font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Detail peminjaman</h1>
         </div>
         <x-status-badge :status="$borrowing->status" class="!px-3 !py-1.5" />
     </div>
@@ -10,7 +10,7 @@
     <div class="mt-6 grid gap-5 lg:grid-cols-[1.3fr_0.7fr]">
         <div class="panel">
             <div class="flex gap-4">
-                <x-book-cover :book="$borrowing->book" class="h-28 w-20 rounded-md" />
+                <x-book-cover :book="$borrowing->book" class="h-28 w-20 rounded-none" />
                 <div>
                     <a href="{{ route('member.books.show', $borrowing->book) }}" class="font-display text-lg font-semibold hover:text-accent">
                         {{ $borrowing->book->title }}
@@ -21,14 +21,14 @@
             </div>
 
             @if ($borrowing->member_note)
-                <div class="mt-5 rounded-lg bg-paper p-3 text-sm">
+                <div class="mt-5 border-y border-black py-3 text-sm">
                     <p class="text-xs font-semibold tracking-wide text-muted uppercase">Catatan Anda</p>
                     <p class="mt-1">{{ $borrowing->member_note }}</p>
                 </div>
             @endif
 
             @if ($borrowing->reject_reason)
-                <div class="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                <div class="mt-5 border-y border-red-600 py-3 text-sm text-red-800">
                     <p class="text-xs font-semibold tracking-wide uppercase">Alasan penolakan</p>
                     <p class="mt-1">{{ $borrowing->reject_reason }}</p>
                 </div>
@@ -60,14 +60,14 @@
             <div class="flex justify-between gap-3"><dt class="text-muted">Diproses oleh</dt><dd>{{ $borrowing->handler?->name ?? '—' }}</dd></div>
 
             @if ($borrowing->fine)
-                <div class="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
+                <div class="mt-3 border-y border-red-600 py-3">
                     <p class="text-xs font-semibold tracking-wide text-red-800 uppercase">Denda</p>
                     <p class="mt-1 font-semibold text-red-800">Rp{{ number_format($borrowing->fine->amount, 0, ',', '.') }}</p>
                     <p class="text-xs text-red-700">{{ $borrowing->fine->days_late }} hari terlambat</p>
                     <div class="mt-2"><x-status-badge :status="$borrowing->fine->status->value" /></div>
                 </div>
             @elseif ($borrowing->isOverdue())
-                <p class="mt-3 rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+                <p class="mt-3 border-y border-amber-600 py-3 text-xs text-amber-800">
                     Terlambat {{ $borrowing->daysLate() }} hari. Denda belum diterbitkan sampai buku dikembalikan.
                 </p>
             @endif

@@ -1,7 +1,7 @@
 <x-layouts.admin title="Pengaturan" heading="Pengaturan">
     <div class="max-w-2xl">
-        <h1 class="font-display text-2xl font-semibold">Pengaturan aplikasi</h1>
-        <p class="mt-1 text-sm text-muted">Aturan peminjaman dan identitas perpustakaan yang dipakai di seluruh halaman.</p>
+        <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Pengaturan aplikasi</h1>
+        <p class="eyebrow mt-4">Aturan peminjaman dan identitas perpustakaan.</p>
 
         <form method="POST" action="{{ route('admin.settings.update') }}" class="mt-6 space-y-5 panel">
             @csrf @method('PATCH')

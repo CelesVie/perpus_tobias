@@ -6,7 +6,7 @@
     <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div>
             <p class="font-mono text-xs text-muted">{{ $borrowing->code }}</p>
-            <h1 class="mt-1 font-display text-2xl font-semibold">{{ $borrowing->book?->title }}</h1>
+            <h1 class="mt-2 font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">{{ $borrowing->book?->title }}</h1>
         </div>
         <x-status-badge :status="$borrowing->status" class="!px-3 !py-1.5" />
     </div>
@@ -16,7 +16,7 @@
             <div class="panel">
                 <h2 class="text-xs font-bold tracking-widest uppercase">Buku</h2>
                 <div class="mt-3 flex gap-4">
-                    <x-book-cover :book="$borrowing->book" class="h-28 w-20 rounded-md" />
+                    <x-book-cover :book="$borrowing->book" class="h-28 w-20 rounded-none" />
                     <div class="text-sm">
                         <p class="font-semibold">{{ $borrowing->book?->title }}</p>
                         <p class="mt-1 text-muted">{{ $borrowing->book?->authorNames() }}</p>
@@ -28,14 +28,14 @@
                 </div>
 
                 @if ($borrowing->member_note)
-                    <div class="mt-4 rounded-lg bg-paper p-3 text-sm">
+                    <div class="mt-4 border-y border-black py-3 text-sm">
                         <p class="text-xs font-semibold tracking-wide text-muted uppercase">Catatan anggota</p>
                         <p class="mt-1">{{ $borrowing->member_note }}</p>
                     </div>
                 @endif
 
                 @if ($borrowing->reject_reason)
-                    <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                    <div class="mt-4 border-y border-red-600 py-3 text-sm text-red-800">
                         <p class="text-xs font-semibold uppercase">Alasan penolakan</p>
                         <p class="mt-1">{{ $borrowing->reject_reason }}</p>
                     </div>
@@ -95,7 +95,7 @@
             <div class="flex justify-between gap-3"><dt class="text-muted">Diproses oleh</dt><dd>{{ $borrowing->handler?->name ?? '—' }}</dd></div>
 
             @if ($borrowing->fine)
-                <div class="mt-2 rounded-lg border border-red-200 bg-red-50 p-3">
+                <div class="mt-2 border-y border-red-600 py-3">
                     <p class="text-xs font-semibold uppercase text-red-800">Denda</p>
                     <p class="mt-1 font-semibold text-red-800">Rp{{ number_format($borrowing->fine->amount, 0, ',', '.') }}</p>
                     <p class="text-xs text-red-700">{{ $borrowing->fine->days_late }} hari terlambat</p>

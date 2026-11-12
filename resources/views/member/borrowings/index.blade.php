@@ -1,13 +1,13 @@
 <x-layouts.member title="Peminjaman saya">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="font-display text-2xl font-semibold">Peminjaman saya</h1>
-            <p class="mt-1 text-sm text-muted">Pantau status permohonan dan jatuh tempo.</p>
+            <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Peminjaman saya</h1>
+            <p class="eyebrow mt-4">Pantau status permohonan dan jatuh tempo.</p>
         </div>
         <div class="flex flex-wrap gap-1.5 text-xs">
             @foreach (['' => 'Semua', 'requested' => 'Menunggu', 'approved' => 'Dipinjam', 'returned' => 'Selesai'] as $value => $label)
                 <a href="{{ route('member.borrowings.index', $value === '' ? [] : ['status' => $value]) }}"
-                   class="rounded-lg border px-3 py-1.5 font-semibold {{ $status === ($value ?: null) ? 'border-primary bg-primary text-white' : 'border-line bg-surface text-muted hover:text-ink' }}">
+                   class="rounded-none border border-black px-3 py-1.5 font-sans text-[10px] font-semibold tracking-widest uppercase {{ $status === ($value ?: null) ? 'bg-black text-white' : 'bg-white text-muted hover:text-black' }}">
                     {{ $label }}
                 </a>
             @endforeach

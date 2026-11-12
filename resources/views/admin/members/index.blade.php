@@ -1,6 +1,6 @@
 <x-layouts.admin title="Anggota" heading="Anggota">
-    <h1 class="font-display text-2xl font-semibold">Anggota</h1>
-    <p class="mt-1 text-sm text-muted">Kelola akun anggota perpustakaan.</p>
+    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Anggota</h1>
+    <p class="eyebrow mt-4">Kelola akun anggota perpustakaan.</p>
 
     <form method="GET" class="mt-5 flex max-w-md gap-2">
         <input name="q" value="{{ $term }}" class="field" placeholder="Cari nama atau email" aria-label="Cari anggota">

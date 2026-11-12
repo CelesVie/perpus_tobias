@@ -1,8 +1,8 @@
 <x-layouts.admin title="Laporan" heading="Laporan">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="font-display text-2xl font-semibold">Laporan</h1>
-            <p class="mt-1 text-sm text-muted">
+            <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Laporan</h1>
+            <p class="eyebrow mt-4">
                 Periode {{ $from->translatedFormat('d M Y') }} – {{ $to->translatedFormat('d M Y') }}
             </p>
         </div>
@@ -55,8 +55,8 @@
                     @php $max = max(1, $byCategory->max('books_count')); @endphp
                     <li>
                         <div class="flex justify-between text-xs"><span class="font-medium">{{ $category->name }}</span><span class="text-muted">{{ $category->books_count }}</span></div>
-                        <div class="mt-1 h-1.5 rounded-full bg-primary-ghost">
-                            <div class="h-full rounded-full bg-accent" style="width: {{ round($category->books_count / $max * 100) }}%"></div>
+                        <div class="mt-1 h-1.5 border border-black bg-white">
+                            <div class="h-full bg-black" style="width: {{ round($category->books_count / $max * 100) }}%"></div>
                         </div>
                     </li>
                 @endforeach

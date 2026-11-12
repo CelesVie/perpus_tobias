@@ -48,7 +48,7 @@
         <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             @forelse ($categories as $category)
                 <a href="{{ route('categories.show', $category) }}"
-                   class="group flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-4 transition hover:border-accent/50 hover:bg-accent-soft/40">
+                   class="group flex items-center justify-between gap-3 rounded-none border border-black px-4 py-4 transition hover:bg-primary-ghost">
                     <span class="text-sm font-semibold">{{ $category->name }}</span>
                     <span class="badge bg-paper text-muted group-hover:bg-surface">{{ $category->books_count }}</span>
                 </a>
@@ -90,7 +90,7 @@
     </section>
 
     <section class="mx-auto max-w-6xl px-4 pb-4 sm:px-6">
-        <div class="grid gap-6 rounded-2xl bg-primary p-8 text-white sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+        <div class="grid gap-6 border-y border-black bg-black p-8 text-white sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
                 <p class="eyebrow !text-accent-soft">Keanggotaan</p>
                 <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight sm:text-3xl">Belum jadi anggota?</h2>

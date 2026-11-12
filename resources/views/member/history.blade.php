@@ -1,6 +1,6 @@
 <x-layouts.member title="Riwayat & denda">
-    <h1 class="font-display text-2xl font-semibold">Riwayat & denda</h1>
-    <p class="mt-1 text-sm text-muted">Catatan peminjaman yang sudah selesai dan denda yang tercatat.</p>
+    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Riwayat & denda</h1>
+    <p class="eyebrow mt-4">Catatan transaksi selesai dan denda tercatat.</p>
 
     <section class="mt-6">
         <h2 class="text-sm font-bold tracking-wide uppercase">Denda</h2>

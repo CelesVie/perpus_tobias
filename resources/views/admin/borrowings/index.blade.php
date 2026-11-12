@@ -1,12 +1,12 @@
 <x-layouts.admin title="Peminjaman" heading="Peminjaman">
-    <h1 class="font-display text-2xl font-semibold">Peminjaman</h1>
-    <p class="mt-1 text-sm text-muted">Setujui, tolak, dan proses pengembalian buku.</p>
+    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Peminjaman</h1>
+    <p class="eyebrow mt-4">Setujui, tolak, dan proses pengembalian buku.</p>
 
     <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap gap-1.5 text-xs">
             @foreach (['requested' => 'Menunggu ('.$counts['requested'].')', 'approved' => 'Dipinjam ('.$counts['approved'].')', 'terlambat' => 'Terlambat ('.$counts['terlambat'].')', 'semua' => 'Semua'] as $value => $label)
                 <a href="{{ route('admin.borrowings.index', ['status' => $value]) }}"
-                   class="rounded-lg border px-3 py-1.5 font-semibold {{ $status === $value ? 'border-primary bg-primary text-white' : 'border-line bg-surface text-muted hover:text-ink' }}">
+                   class="rounded-none border border-black px-3 py-1.5 font-sans text-[10px] font-semibold tracking-widest uppercase {{ $status === $value ? 'bg-black text-white' : 'bg-white text-muted hover:text-black' }}">
                     {{ $label }}
                 </a>
             @endforeach

@@ -1,19 +1,19 @@
 <x-layouts.admin title="Denda" heading="Denda">
     <div class="flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="font-display text-2xl font-semibold">Denda</h1>
-            <p class="mt-1 text-sm text-muted">Denda dibuat otomatis saat pengembalian melewati jatuh tempo.</p>
+            <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Denda</h1>
+            <p class="eyebrow mt-4">Denda otomatis untuk pengembalian terlambat.</p>
         </div>
-        <div class="rounded-xl border border-line bg-surface px-4 py-2.5 text-sm">
-            <p class="text-xs text-muted uppercase">Belum dibayar</p>
-            <p class="font-display text-lg font-semibold">Rp{{ number_format($totalUnpaid, 0, ',', '.') }}</p>
+        <div class="border-y border-black px-4 py-2.5 text-sm">
+            <p class="eyebrow">Belum dibayar</p>
+            <p class="font-display text-2xl font-bold">Rp{{ number_format($totalUnpaid, 0, ',', '.') }}</p>
         </div>
     </div>
 
     <div class="mt-5 flex flex-wrap gap-1.5 text-xs">
         @foreach (['unpaid' => 'Belum dibayar', 'paid' => 'Lunas', 'semua' => 'Semua'] as $value => $label)
             <a href="{{ route('admin.fines.index', ['status' => $value]) }}"
-               class="rounded-lg border px-3 py-1.5 font-semibold {{ $status === $value ? 'border-primary bg-primary text-white' : 'border-line bg-surface text-muted hover:text-ink' }}">
+               class="rounded-none border border-black px-3 py-1.5 font-sans text-[10px] font-semibold tracking-widest uppercase {{ $status === $value ? 'bg-black text-white' : 'bg-white text-muted hover:text-black' }}">
                 {{ $label }}
             </a>
         @endforeach
