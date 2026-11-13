@@ -204,7 +204,48 @@ Project ini menerapkan pagination terkontrol di seluruh modul admin dan member:
 
 ---
 
-## 5. Ringkasan Poin Kunci untuk Penguji UKK
+## 5. Clean Code & Type Safety (Standar Industri)
+
+Dua kebiasaan kecil yang jarang disadari pelajar, tetapi sangat diperhatikan oleh developer magang/PKL:
+
+### A. PHP Enums — Menggantikan "Magic Strings" agar Type-Safe
+Pada tutorial dasar, status peminjaman biasanya ditulis sebagai teks biasa (*magic string*) yang tersebar di sana-sini, misalnya `where('status', 'approved')` di satu file dan `'Approvved'` (salah ketik) di file lain. Sekali salah tulis, bug-nya sangat sulit dilacak karena PHP tidak akan memberi peringatan apa pun.
+Project ini memusatkan semua status dan peran ke dalam **PHP Enum**:
+```php
+// app/Enums/BorrowingStatus.php
+enum BorrowingStatus: string
+{
+    case Requested = 'requested';
+    case Approved = 'approved';
+    case Returned = 'returned';
+    // ...
+}
+
+// app/Enums/UserRole.php
+enum UserRole: string
+{
+    case Admin = 'admin';
+    case Member = 'member';
+}
+```
+Pemakaiannya di query juga mengandalkan Enum, bukan teks langsung:
+```php
+Borrowing::query()->where('status', BorrowingStatus::Approved)->count();
+```
+Keuntungannya:
+* **Type-safe**: Kalau salah menulis `BorrowingStatus::Approvved`, editor akan langsung menampilkan error sebelum aplikasi dijalankan.
+* **Satu sumber kebenaran (*single source of truth*)**: Semua nilai 'approved', 'returned', dan sebagainya dikelola di satu tempat.
+
+### B. Automated Code Styling dengan Laravel Pint (PSR-12)
+Kerapian spasi, letak kurung kurawal, dan urutan `use` import tidak perlu dirapikan manual satu per satu. Project memanfaatkan **Laravel Pint** — formatter otomatis yang sudah tersedia bawaan Laravel:
+```bash
+vendor/bin/pint
+```
+Satu perintah ini langsung merapikan seluruh kode agar konsisten mengikuti standar **PSR-12** (konvensi penulisan PHP yang diakui industri), tanpa mengubah logika program sedikit pun. Karena dijalankan otomatis, seluruh anggota tim (atau versi AI coding-agent) menghasilkan gaya kode yang sama persis, sehingga hasil review kode (code review) jauh lebih bersih.
+
+---
+
+## 6. Ringkasan Poin Kunci untuk Penguji UKK
 
 Saat mempresentasikan arsitektur ini di depan guru penguji atau asesor industri:
 
