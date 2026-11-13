@@ -75,24 +75,6 @@ class Book extends Model
         return $this->cover_path ? asset('storage/'.$this->cover_path) : null;
     }
 
-    /**
-     * Cover palette derived from the title when no image was uploaded.
-     *
-     * @return array{0: string, 1: string, 2: string}
-     */
-    public function coverPalette(): array
-    {
-        $palettes = [
-            ['#243447', '#4F8A83', '#FAF9F6'],
-            ['#3B4A5A', '#8A6E4F', '#F6F1E8'],
-            ['#1F3A34', '#7BA88F', '#F2F7F4'],
-            ['#432F2F', '#B07A5E', '#FAF3EE'],
-            ['#2C2F45', '#6C7BA8', '#F3F4FA'],
-        ];
-
-        return $palettes[crc32($this->slug) % count($palettes)];
-    }
-
     #[Scope]
     protected function search(Builder $query, ?string $term): void
     {

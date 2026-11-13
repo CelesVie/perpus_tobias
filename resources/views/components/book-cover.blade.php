@@ -1,21 +1,16 @@
 @props(['book'])
 
-@php
-    [$a, $b, $c] = $book->coverPalette();
-    $initials = \Illuminate\Support\Str::of($book->title)->explode(' ')->take(2)
-        ->map(fn ($w) => \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($w, 0, 1)))->implode('');
-@endphp
-
-<div {{ $attributes->merge(['class' => 'relative overflow-hidden']) }}>
+<div {{ $attributes->merge(['class' => 'relative overflow-hidden rounded-none border border-black bg-paper']) }}>
     @if ($book->coverUrl())
-        <img src="{{ $book->coverUrl() }}" alt="Sampul {{ $book->title }}" class="size-full object-cover" loading="lazy">
+        <img src="{{ $book->coverUrl() }}" alt="Sampul {{ $book->title }}" class="flex size-full object-cover" loading="lazy">
     @else
-        <div class="flex size-full flex-col justify-between p-4" style="background: linear-gradient(150deg, {{ $a }} 0%, {{ $b }} 100%);">
-            <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style="color: {{ $c }}aa">Koleksi</span>
-            <div>
-                <p class="font-display text-2xl leading-none" style="color: {{ $c }}">{{ $initials }}</p>
-                <p class="mt-2 line-clamp-3 text-xs font-semibold leading-snug" style="color: {{ $c }}e6">{{ $book->title }}</p>
-            </div>
+        @php $initial = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($book->title, 0, 1)); @endphp
+        <svg class="absolute inset-0 size-full text-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M-10,-10 L110,110" stroke="currentColor" stroke-width="1" />
+            <path d="M110,-10 L-10,110" stroke="currentColor" stroke-width="1" />
+        </svg>
+        <div class="relative flex size-full items-center justify-center">
+            <span class="font-serif-display text-3xl font-bold tracking-tight text-muted">{{ $initial }}</span>
         </div>
     @endif
 </div>

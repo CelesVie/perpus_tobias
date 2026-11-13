@@ -74,6 +74,10 @@ class BookCatalogService
                 ]);
             }
 
+            if ($book->cover_path !== null) {
+                Storage::disk('public')->delete($book->cover_path);
+            }
+
             $book->delete();
             ActivityLog::record('book.deleted', "Buku \"{$book->title}\" dihapus.", $book);
         });

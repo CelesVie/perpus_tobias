@@ -17,13 +17,18 @@
         @if ($books->isEmpty())
             <div class="p-6"><x-empty-state title="Belum ada buku" description="Tambahkan judul pertama ke katalog." icon="book-open" /></div>
         @else
-            <table class="table-base min-w-[760px]">
+            <table class="table-base min-w-[820px]">
                 <thead>
-                    <tr><th>Judul</th><th>Kategori</th><th>Eksemplar</th><th>Ketersediaan</th><th class="text-right">Aksi</th></tr>
+                    <tr><th>Sampul</th><th>Judul</th><th>Kategori</th><th>Eksemplar</th><th>Ketersediaan</th><th class="text-right">Aksi</th></tr>
                 </thead>
                 <tbody>
                     @foreach ($books as $book)
                         <tr>
+                            <td class="align-top">
+                                <div class="shrink-0">
+                                    <x-book-cover :book="$book" class="h-14 w-10" />
+                                </div>
+                            </td>
                             <td>
                                 <p class="font-semibold">{{ $book->title }}</p>
                                 <p class="text-xs text-muted">{{ $book->authorNames() }} &middot; {{ $book->publication_year ?: '—' }}</p>

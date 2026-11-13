@@ -87,12 +87,22 @@
                     @error('total_copies') <p class="error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="label" for="cover">Sampul</label>
-                    <input id="cover" name="cover" type="file" accept="image/*" class="field @error('cover') field-error @enderror">
+                    <label class="label" for="cover">Sampul buku</label>
+                    <div class="flex items-start gap-4">
+                        <div class="shrink-0">
+                            <x-book-cover :book="$book" class="h-24 w-16" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <input id="cover" name="cover" type="file"
+                                   accept="image/jpeg,image/png,image/webp"
+                                   class="field @error('cover') field-error @enderror">
+                            <p class="help mt-1.5">
+                                {{ $book->coverUrl() ? 'Sampul terpasang: '.basename($book->cover_path).'. Unggah file baru untuk mengganti, atau biarkan kosong.'
+                                    : 'JPG, PNG, atau WebP, maksimal 2 MB. Berkas tanpa sampul akan ditampilkan sebagai kotak bernotasi.'.'' }}
+                            </p>
+                        </div>
+                    </div>
                     @error('cover') <p class="error">{{ $message }}</p> @enderror
-                    @if ($book->coverUrl())
-                        <p class="help">Sampul saat ini terpasang. Unggah baru untuk mengganti.</p>
-                    @endif
                 </div>
             </div>
 

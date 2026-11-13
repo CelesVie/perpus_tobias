@@ -75,6 +75,27 @@ Seluruh kalkulasi rumit dipindahkan ke `BorrowingService`:
 4. Mengurangi eksemplar buku yang tersedia secara aman.
 5. Menghitung tanggal jatuh tempo (*due date*) sesuai pengaturan sistem.
 
+### Service Layer Juga Membersihkan File Fisik (Anti *Storage Leak*)
+Selain memisahkan logika bisnis, Service Layer di sini juga bertanggung jawab menjaga kebersihan penyimpanan file. Saat admin mengganti cover buku atau menghapus buku, file gambar lama tidak dibiarkan menumpuk di disk:
+```php
+// app/Services/BookCatalogService.php — saat mengganti cover
+if ($newCoverPath !== null) {
+    $oldCoverPath = $book->cover_path;
+    $data['cover_path'] = $newCoverPath; // simpan path baru
+}
+// ... setelah buku tersimpan ...
+if (isset($oldCoverPath) && $oldCoverPath !== null) {
+    Storage::disk('public')->delete($oldCoverPath); // hapus file fisik lama
+}
+
+// Saat buku dihapus
+if ($book->cover_path !== null) {
+    Storage::disk('public')->delete($book->cover_path);
+}
+$book->delete();
+```
+Tanpa langkah `Storage::delete()` ini, setiap kali cover diubah atau buku dihapus akan menyisakan file yatim (*orphaned file*) di folder `storage/app/public/covers/` — lama-kelamaan memakan ruang disk tanpa guna. Ini disebut *storage/disk leak*, dan pencegahannya dipusatkan di satu tempat (Service) karena justru di sinilah aturan bisnis semacam ini seharusnya hidup.
+
 ---
 
 ## 2. Keamanan Data, Integritas, dan Validasi
@@ -138,6 +159,7 @@ Identitas visual Pustaka memadukan keanggunan tata letak majalah/surat kabar (**
   * **Inter (Sans-Serif)**: Digunakan untuk angka data, teks isi, dan form input demi keterbacaan (*readability*) maksimal.
 * **Border Tegas & Grid Rapi**: Menggunakan garis pemisah nyata (`border border-black` / `border-line`), palet warna monokrom berlatar kertas bersih (`#ffffff` dan `#e8e5df`), serta aksen warna merah tua/crimson (`#9d3327`) untuk status penting.
 * **Tailwind CSS v4 Native**: Menggunakan arsitektur utility Tailwind v4 terbaru dengan konfigurasi tema `@theme` langsung di CSS tanpa file konfigurasi `tailwind.config.js` yang usang.
+* **Cover Buku: Placeholder Garis Silang (X)**: Komponen `<x-book-cover>` dipakai seragam dari tabel admin, form, kartu katalog, sampai halaman detail. Jika buku belum punya gambar, alih-alih memakai kotak kosong yang membosankan atau warna acak, komponen menampilkan kotak kaku `border-black` dengan dua garis diagonal silang (X) via SVG serta inisial judul berfont Playfair Display. Hasilnya: setiap cover selalu punya "bentuk" yang tegas dan tingginya konsisten sehingga layout tidak runtuh meski sebagian data tanpa gambar.
 
 ---
 

@@ -32,6 +32,8 @@ Dibuat untuk kebutuhan tugas akhir / UKK RPL dan portofolio magang, web ini meng
   Berbeda dari dashboard template Bootstrap konvensional, web ini mengusung estetika editorial surat kabar & gaya brutalisme: border tegas (`border-2 border-black`), kontras tinggi, grid presisi, dan tipografi monospaced/serif yang unik.
 - 📦 **Master Data & Relasi Lengkap**  
   Mendukung katalog buku komprehensif: multi-penulis (*many-to-many*), penerbit, kategori, tahun terbit, halaman, status ketersediaan, serta pencarian & filter cepat.
+- 🖼️ **Manajemen Cover Buku (Upload & Storage)**  
+  Upload sampul jpg/png/webp (maks 2 MB) langsung dari form admin, disimpan ke disk `public/covers/`. Sistem otomatis menghapus file lama saat cover diganti — dan menghapus file fisik saat buku dihapus — supaya tidak ada *storage leak*. Buku tanpa cover ditampilkan sebagai placeholder kotak kaku bergaris silang (X) yang konsisten.
 - 📊 **Statistik & Audit Log Rapi**  
   Dashboard admin menyajikan metrik buku aktif, peminjaman pending, buku terlambat, serta total denda tertunggak secara real-time.
 
@@ -79,7 +81,13 @@ Jalankan migrasi tabel beserta seeder data awal (buku, penulis, penerbit, akun a
 php artisan migrate --seed
 ```
 
-### 6. Install Dependensi Frontend & Build Vite
+### 6. Buat Symlink Storage
+```bash
+php artisan storage:link
+```
+Wajib dijalankan supaya gambar cover buku (di `storage/app/public/covers/`) bisa diakses lewat URL dan tidak broken.
+
+### 7. Install Dependensi Frontend & Build Vite
 > ⚠️ **Penting:** Aplikasi ini menggunakan Tailwind CSS v4. Kamu **wajib** melakukan build aset frontend agar seluruh styling editorial dan layout brutalist tampil sempurna!
 
 ```bash
@@ -91,7 +99,7 @@ npm run build
 ```
 *Tips: Jika sedang mengembangkan tampilan, jalankan `npm run dev` untuk hot-reload.*
 
-### 7. Jalankan Server Lokal
+### 8. Jalankan Server Lokal
 ```bash
 php artisan serve
 ```
