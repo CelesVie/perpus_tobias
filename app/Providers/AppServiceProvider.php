@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use App\Models\Borrowing;
+use App\Enums\BorrowingStatus;
 use App\Models\Book;
+use App\Models\Borrowing;
 use App\Policies\BookPolicy;
 use App\Policies\BorrowingPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -18,14 +19,6 @@ use Illuminate\Support\Str;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
-    /**
      * Bootstrap any application services.
      */
     public function boot(): void
@@ -36,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useTailwind();
 
         View::composer('layouts.admin', function ($view): void {
-            $view->with('pendingCount', auth()->check() ? \App\Models\Borrowing::query()->where('status', 'requested')->count() : 0);
+            $view->with('pendingCount', auth()->check() ? Borrowing::query()->where('status', BorrowingStatus::Requested)->count() : 0);
         });
 
         RateLimiter::for('login', fn (Request $request) => Limit::perMinute(6)

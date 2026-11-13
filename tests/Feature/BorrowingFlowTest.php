@@ -287,10 +287,10 @@ class BorrowingFlowTest extends TestCase
             'user_id' => $borrowing->user_id,
             'status' => FineStatus::Unpaid,
         ]);
-        $service = app(\App\Services\BorrowingService::class);
+        $service = app(BorrowingService::class);
 
         $service->payFine($fine, $admin);
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         $service->payFine($fine->fresh(), $admin);
     }

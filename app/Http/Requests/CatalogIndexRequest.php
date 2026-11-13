@@ -16,7 +16,7 @@ class CatalogIndexRequest extends FormRequest
             'penerbit' => ['nullable', 'integer', 'exists:publishers,id'],
             'tahun' => ['nullable', 'integer', 'min:1900', 'max:2100'],
             'ketersediaan' => ['nullable', Rule::in(['tersedia', 'dipinjam'])],
-            'urut' => ['nullable', Rule::in(['baru', 'populer', 'judul'])],
+            'urut' => ['nullable', Rule::in(['', 'baru', 'populer', 'judul'])],
         ];
     }
 }

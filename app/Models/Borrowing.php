@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BorrowingStatus;
 use Database\Factories\BorrowingFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -77,7 +78,7 @@ class Borrowing extends Model
 
     public function statusLabel(): string
     {
-        return \App\Enums\BorrowingStatus::from($this->status)->label();
+        return BorrowingStatus::from($this->status)->label();
     }
 
     #[Scope]
