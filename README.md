@@ -28,6 +28,8 @@ Dibuat untuk kebutuhan tugas akhir / UKK RPL dan portofolio magang, web ini meng
   Pemisahan akses tegas antara **Pustakawan (Admin)** dan **Anggota (Member)** melalui middleware:
   - **Admin**: Dashboard statistik, manajemen buku & kategori, approval peminjaman, pencatatan pengembalian, status denda, dan ekspor laporan.
   - **Member**: Akses katalog publik, detail buku, booking peminjaman, pemantauan status pinjam, serta riwayat denda pribadi.
+- 🧹 **Manajemen Anggota (Nonaktifkan / Hapus Permanen)**  
+  Pustakawan bisa menonaktifkan akun yang bermasalah, atau **menghapus permanen** akun anggota fiktif/tidak valid langsung dari halaman detail anggota. Penghapusan sengaja dibuat ketat: akun hanya boleh dihapus bila **bersih dari riwayat peminjaman maupun denda**. Kalau anggota pernah meminjam atau punya tunggakan, sistem menolak dan menyarankan opsi nonaktifkan — supaya riwayat transaksi perpustakaan tidak hilang begitu saja.
 - 📰 **Desain UI/UX Brutalist & Editorial**  
   Berbeda dari dashboard template Bootstrap konvensional, web ini mengusung estetika editorial surat kabar & gaya brutalisme: border tegas (`border-2 border-black`), kontras tinggi, grid presisi, dan tipografi monospaced/serif yang unik.
 - 📦 **Master Data & Relasi Lengkap**  

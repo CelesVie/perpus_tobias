@@ -141,6 +141,41 @@ return DB::transaction(function () use ($member, $book, $note): Borrowing {
 ```
 * **Mekanisme**: Saat Siswa A memproses request, baris data buku di-lock secara eksklusif oleh MySQL. Request Siswa B harus menunggu sepersekian milidetik hingga transaksi Siswa A selesai. Saat giliran Siswa B dieksekusi, sistem mendeteksi stok sudah `0` dan otomatis menolak permohonan dengan pesan yang valid.
 
+### D. Studi Kasus: Penghapusan Akun Anggota (`MemberAccountService::delete()`)
+Fitur "hapus akun" terdengar sepele — cukup `$user->delete()`. Tapi di database relasional, satu baris user bisa "ditembak" oleh tabel lain. Karena itu penghapusan akun di Pustaka melewati dua lapis pengamanan:
+
+**1. Proteksi Foreign Key & Audit Trail**
+Tabel `borrowings` dan `fines` memakai constraint `restrictOnDelete()` — artinya MySQL akan **menolak** penghapusan user yang masih direferensikan di tabel tersebut. Kalau kita hapus langsung tanpa cek, aplikasi bukan menghapus data, melainkan **crash** dengan `QueryException`.
+Solusinya, Service mengecek riwayat lebih dulu:
+```php
+// app/Services/MemberAccountService.php
+if ($member->borrowings()->exists() || $member->fines()->exists()) {
+    throw ValidationException::withMessages([
+        'member' => 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman/denda. Gunakan opsi nonaktifkan akun.',
+    ]);
+}
+
+$name = $member->name;
+$member->forceDelete();
+
+// Dicatat SETELAH data dihapus, tapi nama sudah disimpan lebih dulu
+ActivityLog::record('member.deleted', "Akun anggota {$name} dihapus permanen.");
+```
+Dua hal penting di sini:
+* **Riwayat transaksi tetap utuh.** Peminjaman dan denda adalah bukti akuntabilitas perpustakaan; menghapusnya demi "merapikan" data anggota justru merusak laporan.
+* **Audit trail tidak ikut hilang.** Nama anggota disimpan ke variabel `$name` *sebelum* `forceDelete()`, karena setelah baris user lenyap tidak ada lagi data yang bisa dibaca untuk menulis log. Log `member.deleted` mencatat siapa admin yang menghapus dan siapa yang dihapus.
+
+**2. Concurrency Guard (Anti Race Condition)**
+Skenario jahat: admin menekan "Hapus akun" pada detik yang sama ketika anggota tersebut menekan "Ajukan peminjaman". Tanpa pengamanan, pengecekan riwayat bisa lolos (karena peminjaman belum tersimpan), lalu penghapusan jalan — dan request peminjaman yang menyusul menabrak user yang sudah tidak ada.
+Karena itu seluruh proses dibungkus transaksi dan baris user dikunci:
+```php
+return DB::transaction(function () use ($member): void {
+    $member = User::query()->lockForUpdate()->findOrFail($member->id);
+    // cek role -> cek riwayat -> forceDelete
+});
+```
+Dengan `lockForUpdate()`, request peminjaman yang datang bersamaan akan **menunggu** sampai transaksi hapus selesai. Begitu gilirannya tiba, user sudah tidak ada sehingga permohonan otomatis gagal dengan pesan yang jelas — bukan data yatim (*orphan*) di database.
+
 ---
 
 ## 3. Desain Frontend: Filosofi Editorial Brutalist
@@ -160,6 +195,7 @@ Identitas visual Pustaka memadukan keanggunan tata letak majalah/surat kabar (**
 * **Border Tegas & Grid Rapi**: Menggunakan garis pemisah nyata (`border border-black` / `border-line`), palet warna monokrom berlatar kertas bersih (`#ffffff` dan `#e8e5df`), serta aksen warna merah tua/crimson (`#9d3327`) untuk status penting.
 * **Tailwind CSS v4 Native**: Menggunakan arsitektur utility Tailwind v4 terbaru dengan konfigurasi tema `@theme` langsung di CSS tanpa file konfigurasi `tailwind.config.js` yang usang.
 * **Cover Buku: Placeholder Garis Silang (X)**: Komponen `<x-book-cover>` dipakai seragam dari tabel admin, form, kartu katalog, sampai halaman detail. Jika buku belum punya gambar, alih-alih memakai kotak kosong yang membosankan atau warna acak, komponen menampilkan kotak kaku `border-black` dengan dua garis diagonal silang (X) via SVG serta inisial judul berfont Playfair Display. Hasilnya: setiap cover selalu punya "bentuk" yang tegas dan tingginya konsisten sehingga layout tidak runtuh meski sebagian data tanpa gambar.
+* **Modal Konfirmasi Destruktif (Alpine.js + Brutalist)**: Aksi berbahaya seperti hapus akun tidak pernah dieksekusi lewat satu klik. Tombol `HAPUS AKUN` hanya membuka modal Alpine (`x-data="{ confirmDelete: false }"`) yang bisa ditutup dengan tombol Batal, klik di luar area (`@click.outside`), atau tombol `Esc` (`@keydown.escape.window`). Gayanya tetap kaku: `rounded-none`, `border-red-700`/`bg-red-700`, teks Inter `uppercase tracking-widest`, tanpa shadow — merah tegas dipakai khusus untuk sinyal bahaya tanpa merusak palet monokrom halaman.
 
 ---
 
