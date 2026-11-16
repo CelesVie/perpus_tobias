@@ -29,4 +29,26 @@ class MemberAccountService
             return $member;
         });
     }
+
+    public function delete(User $member): void
+    {
+        DB::transaction(function () use ($member): void {
+            $member = User::query()->lockForUpdate()->findOrFail($member->id);
+
+            if ($member->role !== UserRole::Member) {
+                throw ValidationException::withMessages(['member' => 'Akun ini bukan akun anggota.']);
+            }
+
+            if ($member->borrowings()->exists() || $member->fines()->exists()) {
+                throw ValidationException::withMessages([
+                    'member' => 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman/denda. Gunakan opsi nonaktifkan akun.',
+                ]);
+            }
+
+            $name = $member->name;
+            $member->forceDelete();
+
+            ActivityLog::record('member.deleted', "Akun anggota {$name} dihapus permanen.");
+        });
+    }
 }

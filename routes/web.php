@@ -67,6 +67,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/members', [Admin\MemberController::class, 'index'])->name('members.index');
     Route::get('/members/{member:id}', [Admin\MemberController::class, 'show'])->name('members.show');
     Route::patch('/members/{member:id}/toggle', [Admin\MemberController::class, 'toggle'])->name('members.toggle');
+    Route::delete('/members/{member:id}', [Admin\MemberController::class, 'destroy'])->name('members.destroy');
 
     Route::get('/borrowings', [Admin\BorrowingController::class, 'index'])->name('borrowings.index');
     Route::get('/returns', [Admin\BorrowingController::class, 'index'])->defaults('status', 'approved')->name('returns.index');

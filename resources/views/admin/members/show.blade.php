@@ -26,6 +26,33 @@
                 @csrf @method('PATCH')
                 <button class="btn-outline btn-sm w-full" type="submit">{{ $member->is_active ? 'Nonaktifkan akun' : 'Aktifkan akun' }}</button>
             </form>
+
+            <form method="POST" action="{{ route('admin.members.destroy', $member) }}" class="mt-2"
+                  x-data="{ confirmDelete: false }" @keydown.escape.window="confirmDelete = false">
+                @csrf @method('DELETE')
+                <button type="button" @click="confirmDelete = true"
+                        class="inline-flex w-full items-center justify-center rounded-none border border-red-700 bg-white px-4 py-2 font-sans text-xs font-semibold tracking-widest text-red-700 uppercase transition-colors hover:bg-red-700 hover:text-white">
+                    Hapus akun
+                </button>
+
+                <div x-show="confirmDelete" x-cloak
+                     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 text-left">
+                    <div class="w-full max-w-md rounded-none border border-black bg-white p-5" @click.outside="confirmDelete = false">
+                        <h2 class="font-display text-lg font-semibold">Hapus akun permanen?</h2>
+                        <p class="mt-2 text-sm text-muted">
+                            Akun <span class="font-semibold text-ink">{{ $member->name }}</span> akan dihapus dari database dan tidak dapat dikembalikan.
+                            Penghapusan otomatis ditolak bila anggota masih punya riwayat peminjaman atau denda.
+                        </p>
+                        <div class="mt-4 flex gap-2">
+                            <button type="button" @click="confirmDelete = false" class="btn-outline btn-sm flex-1">Batal</button>
+                            <button type="submit"
+                                    class="inline-flex flex-1 items-center justify-center rounded-none border border-red-700 bg-red-700 px-3 py-1.5 font-sans text-xs font-semibold tracking-widest text-white uppercase transition-colors hover:bg-white hover:text-red-700">
+                                Hapus permanen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
 
         <div class="space-y-5">

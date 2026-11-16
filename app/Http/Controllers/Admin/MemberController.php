@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MemberIndexRequest;
 use App\Models\User;
 use App\Services\MemberAccountService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class MemberController extends Controller
@@ -42,10 +44,23 @@ class MemberController extends Controller
 
     public function toggle(User $member, MemberAccountService $accounts): RedirectResponse
     {
-        abort_unless($member->role->value === 'member', 404);
+        abort_unless($member->role === UserRole::Member, 404);
 
         $accounts->toggle($member);
 
         return back()->with('status', 'Status akun diperbarui.');
+    }
+
+    public function destroy(User $member, MemberAccountService $accounts): RedirectResponse
+    {
+        abort_unless($member->role === UserRole::Member, 404);
+
+        try {
+            $accounts->delete($member);
+        } catch (ValidationException $exception) {
+            return back()->with('error', $exception->validator->errors()->first());
+        }
+
+        return redirect()->route('admin.members.index')->with('status', 'Akun anggota dihapus permanen.');
     }
 }
