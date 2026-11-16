@@ -10,7 +10,7 @@ class BorrowingIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['nullable', 'string', Rule::in(['requested', 'approved', 'rejected', 'returned', 'cancelled', 'semua', 'terlambat'])],
+            'status' => ['nullable', 'string', Rule::in(['requested', 'approved', 'returned', 'rejected', 'cancelled', 'ditolak', 'terlambat', 'semua'])],
             'q' => ['nullable', 'string', 'max:120'],
         ];
     }

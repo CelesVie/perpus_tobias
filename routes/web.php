@@ -70,7 +70,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::delete('/members/{member:id}', [Admin\MemberController::class, 'destroy'])->name('members.destroy');
 
     Route::get('/borrowings', [Admin\BorrowingController::class, 'index'])->name('borrowings.index');
-    Route::get('/returns', [Admin\BorrowingController::class, 'index'])->defaults('status', 'approved')->name('returns.index');
+    Route::get('/returns', [Admin\BorrowingController::class, 'returns'])->name('returns.index');
     Route::get('/borrowings/{borrowing}', [Admin\BorrowingController::class, 'show'])->name('borrowings.show');
     Route::patch('/borrowings/{borrowing}/approve', [Admin\BorrowingController::class, 'approve'])->name('borrowings.approve');
     Route::patch('/borrowings/{borrowing}/reject', [Admin\BorrowingController::class, 'reject'])->name('borrowings.reject');

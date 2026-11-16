@@ -1,6 +1,10 @@
 <x-layouts.admin :title="'Peminjaman '.$borrowing->code" heading="Proses peminjaman">
-    <a href="{{ route('admin.borrowings.index') }}" class="inline-flex items-center gap-1 text-sm text-muted hover:text-ink">
-        <x-icon name="chevron-left" class="size-4" /> Daftar peminjaman
+    @php
+        $fromReturns = request('from') === 'returns';
+        $backRoute = $fromReturns ? route('admin.returns.index') : route('admin.borrowings.index');
+    @endphp
+    <a href="{{ $backRoute }}" class="inline-flex items-center gap-1 text-sm text-muted hover:text-ink">
+        <x-icon name="chevron-left" class="size-4" /> {{ $fromReturns ? 'Daftar pengembalian' : 'Daftar peminjaman' }}
     </a>
 
     <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
