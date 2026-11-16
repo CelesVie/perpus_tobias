@@ -10,7 +10,7 @@
     <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div>
             <p class="font-mono text-xs text-muted">{{ $borrowing->code }}</p>
-            <h1 class="mt-2 font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">{{ $borrowing->book?->title }}</h1>
+            <h1 class="mt-2 break-words font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">{{ $borrowing->book?->title }}</h1>
         </div>
         <x-status-badge :status="$borrowing->status" class="!px-3 !py-1.5" />
     </div>

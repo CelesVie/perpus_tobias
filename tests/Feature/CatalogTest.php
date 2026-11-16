@@ -61,6 +61,17 @@ class CatalogTest extends TestCase
             ->assertDontSee('Stok Kosong');
     }
 
+    public function test_catalog_cards_clamp_long_titles_within_their_column(): void
+    {
+        Book::factory()->create(['title' => 'Belajar dan Faktor yang Mempengaruhinya']);
+
+        $this->get('/books')
+            ->assertOk()
+            ->assertSee('line-clamp-3', false)
+            ->assertSee('break-words', false)
+            ->assertSee('title="Belajar dan Faktor yang Mempengaruhinya"', false);
+    }
+
     public function test_unknown_book_slug_returns_404(): void
     {
         $this->get('/books/tidak-ada')->assertNotFound();

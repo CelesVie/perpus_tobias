@@ -29,7 +29,7 @@
 
             <div>
                 <p class="font-sans text-[10px] font-semibold tracking-[0.15em] text-muted uppercase">{{ $book->category->name }}</p>
-                <h1 class="mt-5 max-w-4xl font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-7xl lg:text-8xl">{{ $book->title }}</h1>
+                <h1 class="mt-5 max-w-4xl break-words font-serif-display text-5xl font-bold leading-none tracking-tight sm:text-7xl lg:text-8xl">{{ $book->title }}</h1>
                 <p class="mt-6 text-base text-muted sm:text-lg">
                     oleh <span class="font-semibold text-ink">{{ $book->authorNames() ?: 'Tanpa penulis' }}</span>
                     <span class="px-1">·</span>{{ $book->publisher?->name ?? 'Tanpa penerbit' }}
