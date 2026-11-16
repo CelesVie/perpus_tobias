@@ -83,13 +83,19 @@ Jalankan migrasi tabel beserta seeder data awal (buku, penulis, penerbit, akun a
 php artisan migrate --seed
 ```
 
-### 6. Buat Symlink Storage
+### 6. Buat Akun Admin Pertama
+Jalankan perintah interaktif berikut untuk membuat akun pustakawan (admin):
+```bash
+php artisan app:create-admin
+```
+
+### 7. Buat Symlink Storage
 ```bash
 php artisan storage:link
 ```
 Wajib dijalankan supaya gambar cover buku (di `storage/app/public/covers/`) bisa diakses lewat URL dan tidak broken.
 
-### 7. Install Dependensi Frontend & Build Vite
+### 8. Install Dependensi Frontend & Build Vite
 > ⚠️ **Penting:** Aplikasi ini menggunakan Tailwind CSS v4. Kamu **wajib** melakukan build aset frontend agar seluruh styling editorial dan layout brutalist tampil sempurna!
 
 ```bash
@@ -101,7 +107,7 @@ npm run build
 ```
 *Tips: Jika sedang mengembangkan tampilan, jalankan `npm run dev` untuk hot-reload.*
 
-### 8. Jalankan Server Lokal
+### 9. Jalankan Server Lokal
 ```bash
 php artisan serve
 ```
