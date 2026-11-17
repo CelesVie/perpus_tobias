@@ -36,6 +36,13 @@
                 </div>
             </div>
 
+            <div>
+                <label class="label" for="address">Alamat</label>
+                <textarea id="address" name="address" rows="2"
+                          class="field @error('address') field-error @enderror">{{ old('address') }}</textarea>
+                @error('address') <p class="error">{{ $message }}</p> @enderror
+            </div>
+
             <div class="grid gap-5 sm:grid-cols-2">
                 <div>
                     <label class="label" for="password">Kata sandi</label>

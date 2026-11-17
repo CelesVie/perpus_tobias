@@ -39,6 +39,7 @@
                             </td>
                             <td class="text-right">
                                 <div class="inline-flex gap-1">
+                                    <a href="{{ route('admin.members.edit', $member) }}" class="btn-outline btn-sm"><x-icon name="pencil" class="size-4" /> Ubah</a>
                                     <a href="{{ route('admin.members.show', $member) }}" class="btn-outline btn-sm">Detail</a>
                                     <form method="POST" action="{{ route('admin.members.toggle', $member) }}">
                                         @csrf @method('PATCH')

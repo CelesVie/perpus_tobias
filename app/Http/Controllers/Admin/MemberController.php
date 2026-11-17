@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MemberIndexRequest;
 use App\Http\Requests\Admin\StoreMemberRequest;
+use App\Http\Requests\Admin\UpdateMemberRequest;
 use App\Models\User;
 use App\Services\MemberAccountService;
 use Illuminate\Http\RedirectResponse;
@@ -45,6 +46,24 @@ class MemberController extends Controller
         return redirect()
             ->route('admin.members.show', $member)
             ->with('status', 'Akun anggota berhasil ditambahkan.');
+    }
+
+    public function edit(User $member): View
+    {
+        abort_unless($member->role === UserRole::Member, 404);
+
+        return view('admin.members.edit', ['member' => $member]);
+    }
+
+    public function update(UpdateMemberRequest $request, User $member, MemberAccountService $accounts): RedirectResponse
+    {
+        abort_unless($member->role === UserRole::Member, 404);
+
+        $accounts->updateMember($member, $request->validated());
+
+        return redirect()
+            ->route('admin.members.show', $member)
+            ->with('status', 'Data anggota berhasil diperbarui.');
     }
 
     public function show(User $member): View
