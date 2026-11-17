@@ -39,9 +39,9 @@ class MemberAccountService
                 throw ValidationException::withMessages(['member' => 'Akun ini bukan akun anggota.']);
             }
 
-            if ($member->borrowings()->exists() || $member->fines()->exists()) {
+            if ($member->borrowings()->exists()) {
                 throw ValidationException::withMessages([
-                    'member' => 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman/denda. Gunakan opsi nonaktifkan akun.',
+                    'member' => 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman. Gunakan opsi nonaktifkan akun.',
                 ]);
             }
 

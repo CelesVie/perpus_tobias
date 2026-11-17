@@ -73,9 +73,9 @@
                         <button class="btn-accent" type="submit"><x-icon name="undo-2" class="size-4" /> Proses pengembalian</button>
                         <p class="help">
                             @if ($borrowing->isOverdue())
-                                Terlambat {{ $borrowing->daysLate() }} hari. Denda dihitung Rp{{ number_format(\App\Models\Setting::getInt('fine_per_day'), 0, ',', '.') }} per hari.
+                                Terlambat {{ $borrowing->daysLate() }} hari dari jatuh tempo.
                             @else
-                                Belum melewati jatuh tempo, tidak ada denda.
+                                Belum melewati jatuh tempo.
                             @endif
                         </p>
                     </form>
@@ -97,23 +97,6 @@
             <div class="flex justify-between gap-3"><dt class="text-muted">Jatuh tempo</dt><dd>{{ $borrowing->due_at?->translatedFormat('d M Y') ?? '—' }}</dd></div>
             <div class="flex justify-between gap-3"><dt class="text-muted">Dikembalikan</dt><dd>{{ $borrowing->returned_at?->translatedFormat('d M Y') ?? '—' }}</dd></div>
             <div class="flex justify-between gap-3"><dt class="text-muted">Diproses oleh</dt><dd>{{ $borrowing->handler?->name ?? '—' }}</dd></div>
-
-            @if ($borrowing->fine)
-                <div class="mt-2 border-y border-red-600 py-3">
-                    <p class="text-xs font-semibold uppercase text-red-800">Denda</p>
-                    <p class="mt-1 font-semibold text-red-800">Rp{{ number_format($borrowing->fine->amount, 0, ',', '.') }}</p>
-                    <p class="text-xs text-red-700">{{ $borrowing->fine->days_late }} hari terlambat</p>
-                    <div class="mt-2 flex items-center gap-2">
-                        <x-status-badge :status="$borrowing->fine->status->value" />
-                        @if ($borrowing->fine->status->value === 'unpaid')
-                            <form method="POST" action="{{ route('admin.fines.pay', $borrowing->fine) }}">
-                                @csrf @method('PATCH')
-                                <button class="btn-ghost btn-sm" type="submit">Tandai lunas</button>
-                            </form>
-                        @endif
-                    </div>
-                </div>
-            @endif
         </dl>
     </div>
 </x-layouts.admin>

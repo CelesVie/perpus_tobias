@@ -72,6 +72,33 @@ class CatalogTest extends TestCase
             ->assertSee('title="Belajar dan Faktor yang Mempengaruhinya"', false);
     }
 
+    public function test_catalog_pagination_stays_stable_when_created_at_timestamps_tie(): void
+    {
+        $category = Category::factory()->create();
+        Book::factory()->count(15)->create(['category_id' => $category->id]);
+
+        // Semua buku dibuat dengan timestamp identik, kondisi yang memicu halaman duplikat.
+        $tiedAt = now()->subDay()->startOfSecond();
+        Book::query()->update(['created_at' => $tiedAt, 'updated_at' => $tiedAt]);
+
+        $pageOne = $this->get('/books?page=1')->assertOk()->viewData('books');
+        $pageTwo = $this->get('/books?page=2')->assertOk()->viewData('books');
+
+        $idsPageOne = $pageOne->pluck('id')->all();
+        $idsPageTwo = $pageTwo->pluck('id')->all();
+        $expectedOrder = Book::query()->orderByDesc('id')->pluck('id')->all();
+
+        $this->assertCount(12, $idsPageOne);
+        $this->assertCount(3, $idsPageTwo);
+        $this->assertSame([], array_values(array_intersect($idsPageOne, $idsPageTwo)));
+        $this->assertSame(array_slice($expectedOrder, 0, 12), $idsPageOne);
+        $this->assertSame(array_slice($expectedOrder, 12), $idsPageTwo);
+        $this->assertEqualsCanonicalizing(
+            Book::query()->pluck('id')->all(),
+            array_merge($idsPageOne, $idsPageTwo)
+        );
+    }
+
     public function test_unknown_book_slug_returns_404(): void
     {
         $this->get('/books/tidak-ada')->assertNotFound();

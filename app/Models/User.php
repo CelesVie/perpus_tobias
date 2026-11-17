@@ -42,12 +42,6 @@ class User extends Authenticatable
         return $this->hasMany(Borrowing::class);
     }
 
-    /** @return HasMany<Fine, $this> */
-    public function fines(): HasMany
-    {
-        return $this->hasMany(Fine::class);
-    }
-
     public function isAdmin(): bool
     {
         return $this->role === UserRole::Admin;
@@ -65,10 +59,5 @@ class User extends Authenticatable
     public function activeLoanCount(): int
     {
         return $this->borrowings()->whereIn('status', Borrowing::ACTIVE_STATUSES)->count();
-    }
-
-    public function unpaidFineTotal(): int
-    {
-        return (int) $this->fines()->where('status', 'unpaid')->sum('amount');
     }
 }

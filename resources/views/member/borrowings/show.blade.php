@@ -59,16 +59,9 @@
             <div class="flex justify-between gap-3"><dt class="text-muted">Dikembalikan</dt><dd>{{ $borrowing->returned_at?->translatedFormat('d M Y') ?? '—' }}</dd></div>
             <div class="flex justify-between gap-3"><dt class="text-muted">Diproses oleh</dt><dd>{{ $borrowing->handler?->name ?? '—' }}</dd></div>
 
-            @if ($borrowing->fine)
-                <div class="mt-3 border-y border-red-600 py-3">
-                    <p class="text-xs font-semibold tracking-wide text-red-800 uppercase">Denda</p>
-                    <p class="mt-1 font-semibold text-red-800">Rp{{ number_format($borrowing->fine->amount, 0, ',', '.') }}</p>
-                    <p class="text-xs text-red-700">{{ $borrowing->fine->days_late }} hari terlambat</p>
-                    <div class="mt-2"><x-status-badge :status="$borrowing->fine->status->value" /></div>
-                </div>
-            @elseif ($borrowing->isOverdue())
+            @if ($borrowing->isOverdue())
                 <p class="mt-3 border-y border-amber-600 py-3 text-xs text-amber-800">
-                    Terlambat {{ $borrowing->daysLate() }} hari. Denda belum diterbitkan sampai buku dikembalikan.
+                    Terlambat {{ $borrowing->daysLate() }} hari dari jatuh tempo.
                 </p>
             @endif
 

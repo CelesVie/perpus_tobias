@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\BorrowingStatus;
-use App\Enums\FineStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\Category;
-use App\Models\Fine;
 use App\Models\User;
 use Illuminate\View\View;
 
@@ -25,7 +23,6 @@ class DashboardController extends Controller
             'active' => Borrowing::query()->where('status', BorrowingStatus::Approved)->count(),
             'pending' => Borrowing::query()->where('status', BorrowingStatus::Requested)->count(),
             'overdue' => Borrowing::query()->overdue()->count(),
-            'fines' => (int) Fine::query()->where('status', FineStatus::Unpaid)->sum('amount'),
         ];
 
         $monthly = collect(range(5, 0))->map(function (int $offset): array {

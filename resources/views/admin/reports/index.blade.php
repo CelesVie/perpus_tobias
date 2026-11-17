@@ -21,10 +21,9 @@
         </div>
     </div>
 
-    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <x-stat-card label="Permohonan" :value="number_format($summary['requests'])" icon="clipboard-list" />
         <x-stat-card label="Pengembalian" :value="number_format($summary['returns'])" icon="undo-2" tone="accent" />
-        <x-stat-card label="Total denda" :value="'Rp'.number_format($summary['fines'], 0, ',', '.')" icon="receipt" tone="warn" />
         <x-stat-card label="Anggota baru" :value="number_format($summary['newMembers'])" icon="users" />
     </div>
 

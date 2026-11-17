@@ -23,8 +23,6 @@ class Setting extends Model
         'library_email' => 'halo@pustaka.test',
         'loan_duration_days' => '7',
         'max_active_loans' => '3',
-        'fine_per_day' => '1000',
-        'max_fine_days' => '30',
     ];
 
     public static function get(string $key, ?string $default = null): ?string

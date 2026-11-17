@@ -1,33 +1,8 @@
-<x-layouts.member title="Riwayat & denda">
-    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Riwayat & denda</h1>
-    <p class="eyebrow mt-4">Catatan transaksi selesai dan denda tercatat.</p>
+<x-layouts.member title="Riwayat">
+    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Riwayat</h1>
+    <p class="eyebrow mt-4">Catatan peminjaman yang sudah selesai.</p>
 
     <section class="mt-6">
-        <h2 class="text-sm font-bold tracking-wide uppercase">Denda</h2>
-        <div class="mt-3 card overflow-x-auto">
-            @if ($fines->isEmpty())
-                <div class="p-6"><x-empty-state title="Tidak ada denda" icon="receipt" /></div>
-            @else
-                <table class="table-base min-w-[560px]">
-                    <thead><tr><th>Buku</th><th>Hari terlambat</th><th>Jumlah</th><th>Status</th><th>Dibayar</th></tr></thead>
-                    <tbody>
-                        @foreach ($fines as $fine)
-                            <tr>
-                                <td class="font-medium">{{ $fine->borrowing?->book?->title ?? '—' }}</td>
-                                <td>{{ $fine->days_late }} hari</td>
-                                <td class="font-semibold">Rp{{ number_format($fine->amount, 0, ',', '.') }}</td>
-                                <td><x-status-badge :status="$fine->status->value" /></td>
-                                <td class="text-xs text-muted">{{ $fine->paid_at?->translatedFormat('d M Y') ?? '—' }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <div class="border-t border-line px-4 py-3">{{ $fines->links() }}</div>
-            @endif
-        </div>
-    </section>
-
-    <section class="mt-8">
         <h2 class="text-sm font-bold tracking-wide uppercase">Riwayat peminjaman</h2>
         <div class="mt-3 card overflow-x-auto">
             @if ($borrowings->isEmpty())

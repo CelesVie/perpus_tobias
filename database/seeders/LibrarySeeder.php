@@ -3,13 +3,11 @@
 namespace Database\Seeders;
 
 use App\Enums\BorrowingStatus;
-use App\Enums\FineStatus;
 use App\Enums\UserRole;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\Category;
-use App\Models\Fine;
 use App\Models\Publisher;
 use App\Models\Setting;
 use App\Models\User;
@@ -232,7 +230,7 @@ class LibrarySeeder extends Seeder
             'processed_by' => $admin->id,
         ]);
 
-        $returned = Borrowing::query()->create([
+        Borrowing::query()->create([
             'user_id' => $members[2]->id,
             'book_id' => Book::query()->skip(8)->first()->id,
             'status' => BorrowingStatus::Returned->value,
@@ -243,15 +241,7 @@ class LibrarySeeder extends Seeder
             'processed_by' => $admin->id,
         ]);
 
-        Fine::query()->create([
-            'borrowing_id' => $returned->id,
-            'user_id' => $members[2]->id,
-            'days_late' => 4,
-            'amount' => 4000,
-            'status' => FineStatus::Unpaid,
-        ]);
-
-        $returnedPaid = Borrowing::query()->create([
+        Borrowing::query()->create([
             'user_id' => $members[3]->id,
             'book_id' => Book::query()->skip(9)->first()->id,
             'status' => BorrowingStatus::Returned->value,
@@ -260,15 +250,6 @@ class LibrarySeeder extends Seeder
             'due_at' => now()->subDays(52),
             'returned_at' => now()->subDays(50),
             'processed_by' => $admin->id,
-        ]);
-
-        Fine::query()->create([
-            'borrowing_id' => $returnedPaid->id,
-            'user_id' => $members[3]->id,
-            'days_late' => 2,
-            'amount' => 2000,
-            'status' => FineStatus::Paid,
-            'paid_at' => now()->subDays(49),
         ]);
 
         $late->load('book');

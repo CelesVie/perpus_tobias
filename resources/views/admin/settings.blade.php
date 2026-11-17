@@ -55,20 +55,6 @@
                                class="field @error('max_active_loans') field-error @enderror">
                         @error('max_active_loans') <p class="error">{{ $message }}</p> @enderror
                     </div>
-                    <div>
-                        <label class="label" for="fine_per_day">Denda per hari (Rp)</label>
-                        <input id="fine_per_day" name="fine_per_day" type="number" min="0" max="100000"
-                               value="{{ old('fine_per_day', $values['fine_per_day']) }}"
-                               class="field @error('fine_per_day') field-error @enderror">
-                        @error('fine_per_day') <p class="error">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="label" for="max_fine_days">Batas hari denda</label>
-                        <input id="max_fine_days" name="max_fine_days" type="number" min="1" max="365"
-                               value="{{ old('max_fine_days', $values['max_fine_days']) }}"
-                               class="field @error('max_fine_days') field-error @enderror">
-                        @error('max_fine_days') <p class="error">{{ $message }}</p> @enderror
-                    </div>
                 </div>
                 <p class="help mt-2">Perubahan berlaku untuk transaksi berikutnya, bukan transaksi yang sudah berjalan.</p>
             </div>

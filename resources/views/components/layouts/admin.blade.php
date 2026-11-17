@@ -37,7 +37,6 @@
                     'Sirkulasi' => [
                         ['admin.borrowings.index', 'clipboard-list', 'Peminjaman', 'admin.borrowings.*'],
                         ['admin.returns.index', 'undo-2', 'Pengembalian', 'admin.returns.*'],
-                        ['admin.fines.index', 'receipt', 'Denda', 'admin.fines.*'],
                     ],
                     'Lainnya' => [
                         ['admin.members.index', 'users', 'Anggota', 'admin.members.*'],

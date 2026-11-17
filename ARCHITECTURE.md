@@ -54,7 +54,7 @@ Agar mudah dipahami oleh penguji, arsitektur ini dapat diibaratkan seperti sebua
 * **Model & Database (Gudang Bahan Makanan)**: Tempat penyimpanan bahan baku (data tabel MySQL) yang diambil oleh koki saat memasak.
 
 ### Mengapa Menambahkan Service Layer? (Masalah *Fat Controller*)
-Jika tidak menggunakan Service Layer, seluruh logika peminjaman (validasi sisa denda member, pengecekan limit kuota pinjam, pengurangan stok buku, pencatatan log) akan menumpuk di dalam Controller hingga ratusan baris. Akibatnya:
+Jika tidak menggunakan Service Layer, seluruh logika peminjaman (validasi keaktifan anggota, pengecekan limit kuota pinjam, pengurangan stok buku, pencatatan log) akan menumpuk di dalam Controller hingga ratusan baris. Akibatnya:
 * Controller menjadi kotor, sulit dibaca, dan rawan salah ubah saat *maintenance*.
 * Logika yang sama sulit digunakan kembali jika di masa depan ada fitur API mobile.
 
@@ -70,10 +70,9 @@ public function store(StoreBorrowingRequest $request, Book $book)
 ```
 Seluruh kalkulasi rumit dipindahkan ke `BorrowingService`:
 1. Memverifikasi status keaktifan akun anggota.
-2. Memeriksa apakah anggota memiliki denda yang belum dibayar.
-3. Memeriksa kuota maksimal buku yang sedang dipinjam.
-4. Mengurangi eksemplar buku yang tersedia secara aman.
-5. Menghitung tanggal jatuh tempo (*due date*) sesuai pengaturan sistem.
+2. Memeriksa kuota maksimal buku yang sedang dipinjam.
+3. Mengurangi eksemplar buku yang tersedia secara aman.
+4. Menghitung tanggal jatuh tempo (*due date*) sesuai pengaturan sistem.
 
 ### Service Layer Juga Membersihkan File Fisik (Anti *Storage Leak*)
 Selain memisahkan logika bisnis, Service Layer di sini juga bertanggung jawab menjaga kebersihan penyimpanan file. Saat admin mengganti cover buku atau menghapus buku, file gambar lama tidak dibiarkan menumpuk di disk:
@@ -111,12 +110,11 @@ Validasi data dipisahkan dari controller dengan membuat kelas turunan `Illuminat
 Dalam proses peminjaman dan pengembalian buku, sistem harus memperbarui lebih dari satu tabel secara serentak:
 1. Memperbarui status di tabel `borrowings`.
 2. Menambah/mengurangi stok `available_copies` di tabel `books`.
-3. Menghasilkan tagihan di tabel `fines` (jika terlambat).
-4. Menyimpan catatan riwayat di tabel `activity_logs`.
+3. Menyimpan catatan riwayat di tabel `activity_logs`.
 
-Dengan `DB::transaction()`, keempat operasi di atas dijalankan sebagai **satu kesatuan (*Atomic*)**:
-* Jika salah satu query gagal (misal koneksi server putus di langkah ke-3), seluruh perubahan sebelumnya otomatis dibatalkan (*Rollback*).
-* Database tidak akan pernah berada dalam kondisi data timpang (misal: status buku berubah kembali, tapi tagihan denda gagal tercatat).
+Dengan `DB::transaction()`, ketiga operasi di atas dijalankan sebagai **satu kesatuan (*Atomic*)**:
+* Jika salah satu query gagal (misal koneksi server putus di langkah ke-2), seluruh perubahan sebelumnya otomatis dibatalkan (*Rollback*).
+* Database tidak akan pernah berada dalam kondisi data timpang (misal: status peminjaman berubah, tapi stok buku gagal dikembalikan).
 
 ### C. Pencegahan Race Condition dengan Pessimistic Locking (`lockForUpdate`)
 * **Studi Kasus Masalah**: Buku *Clean Code* hanya tersisa **1 eksemplar**. Dua siswa (Siswa A dan Siswa B) membuka halaman detail buku dan menekan tombol "Pinjam" pada detik yang persis sama.
@@ -145,13 +143,13 @@ return DB::transaction(function () use ($member, $book, $note): Borrowing {
 Fitur "hapus akun" terdengar sepele — cukup `$user->delete()`. Tapi di database relasional, satu baris user bisa "ditembak" oleh tabel lain. Karena itu penghapusan akun di Pustaka melewati dua lapis pengamanan:
 
 **1. Proteksi Foreign Key & Audit Trail**
-Tabel `borrowings` dan `fines` memakai constraint `restrictOnDelete()` — artinya MySQL akan **menolak** penghapusan user yang masih direferensikan di tabel tersebut. Kalau kita hapus langsung tanpa cek, aplikasi bukan menghapus data, melainkan **crash** dengan `QueryException`.
+Tabel `borrowings` memakai constraint `restrictOnDelete()` — artinya MySQL akan **menolak** penghapusan user yang masih direferensikan di tabel tersebut. Kalau kita hapus langsung tanpa cek, aplikasi bukan menghapus data, melainkan **crash** dengan `QueryException`.
 Solusinya, Service mengecek riwayat lebih dulu:
 ```php
 // app/Services/MemberAccountService.php
-if ($member->borrowings()->exists() || $member->fines()->exists()) {
+if ($member->borrowings()->exists()) {
     throw ValidationException::withMessages([
-        'member' => 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman/denda. Gunakan opsi nonaktifkan akun.',
+        'member' => 'Anggota tidak dapat dihapus karena memiliki riwayat peminjaman. Gunakan opsi nonaktifkan akun.',
     ]);
 }
 
@@ -162,7 +160,7 @@ $member->forceDelete();
 ActivityLog::record('member.deleted', "Akun anggota {$name} dihapus permanen.");
 ```
 Dua hal penting di sini:
-* **Riwayat transaksi tetap utuh.** Peminjaman dan denda adalah bukti akuntabilitas perpustakaan; menghapusnya demi "merapikan" data anggota justru merusak laporan.
+* **Riwayat transaksi tetap utuh.** Peminjaman adalah bukti akuntabilitas perpustakaan; menghapusnya demi "merapikan" data anggota justru merusak laporan.
 * **Audit trail tidak ikut hilang.** Nama anggota disimpan ke variabel `$name` *sebelum* `forceDelete()`, karena setelah baris user lenyap tidak ada lagi data yang bisa dibaca untuk menulis log. Log `member.deleted` mencatat siapa admin yang menghapus dan siapa yang dihapus.
 
 **2. Concurrency Guard (Anti Race Condition)**
@@ -216,27 +214,20 @@ $books = Book::query()
 ```
 Dengan satu baris `with(['authors', 'category', 'publisher'])`, Laravel secara pintar hanya mengeksekusi **2-3 query terpadu** menggunakan klausa `WHERE IN (...)`, berapapun jumlah buku yang ditampilkan di halaman.
 
-### B. Manajemen Memori dengan Pagination Terpisah (*Dual Pagination*)
+### B. Manajemen Memori dengan Pagination
 Mengambil seluruh data menggunakan `->get()` atau `->all()` pada tabel transaksi adalah kesalahan fatal karena dapat menyebabkan kehabisan memori server (*Out of Memory*).
 
 Project ini menerapkan pagination terkontrol di seluruh modul admin dan member:
 * **Halaman Riwayat Anggota (`Member/HistoryController.php`)**:
-  Halaman riwayat menyajikan dua tabel sekaligus: **Daftar Peminjaman** dan **Daftar Tagihan Denda**.
-  Agar tidak bentrok dan tetap hemat memori, sistem menggunakan teknik penamaan parameter pagination khusus:
+  Hanya menampilkan transaksi selesai (`returned`, `rejected`, `cancelled`) sebanyak 10 baris per halaman:
   ```php
-  // Peminjaman menggunakan parameter default ?page=
-  $borrowings = $member->borrowings()
-      ->with(['book.authors', 'fine'])
-      ->latest()
+  $borrowings = $request->user()->borrowings()
+      ->with('book.authors')
+      ->whereIn('status', ['returned', 'rejected', 'cancelled'])
+      ->latest('updated_at')
       ->paginate(10);
-
-  // Denda menggunakan parameter khusus ?fines=
-  $fines = $member->fines()
-      ->with('borrowing.book')
-      ->latest()
-      ->paginate(10, ['*'], 'fines');
   ```
-  Pengguna dapat berpindah halaman pada tabel denda tanpa menggeser posisi halaman pada tabel riwayat peminjaman, menjaga konsumsi memori PHP tetap stabil di batas minimal.
+  Dengan begitu halaman riwayat tetap ringan meskipun anggota sudah pernah meminjam ratusan buku.
 
 ---
 
@@ -287,7 +278,7 @@ Saat mempresentasikan arsitektur ini di depan guru penguji atau asesor industri:
 
 | Topik Pertanyaan Penguji | Jawaban Kunci Berbasis Arsitektur Ini |
 | :--- | :--- |
-| **"Kenapa pakai Service Layer, tidak langsung di Controller?"** | Memisahkan tanggung jawab kode (*Separation of Concerns*). Controller hanya menangani request/response (Skinny), sementara aturan bisnis sirkulasi dan denda terpusat di Service (Fat) sehingga mudah di-unit test dan tidak redundan. |
+| **"Kenapa pakai Service Layer, tidak langsung di Controller?"** | Memisahkan tanggung jawab kode (*Separation of Concerns*). Controller hanya menangani request/response (Skinny), sementara aturan bisnis sirkulasi terpusat di Service (Fat) sehingga mudah di-unit test dan tidak redundan. |
 | **"Bagaimana jika ada 2 user pinjam buku terakhir bersamaan?"** | Sistem menggunakan `DB::transaction()` dipadukan dengan `lockForUpdate()` di MySQL. User kedua akan terkunci (*pessimistic lock*) sampai transaksi pertama selesai, sehingga stok tidak akan pernah minus (*race condition safe*). |
 | **"Apakah aplikasinya lambat jika datanya ribuan?"** | Tidak, karena query relasi dioptimasi menggunakan Eager Loading (`with()`) untuk mematikan N+1 query problem, dan seluruh data disajikan menggunakan Pagination terukur. |
 | **"Kenapa memilih Blade + Tailwind daripada React/Vue?"** | Untuk arsitektur perpustakaan, Server-Side Rendering (SSR) memberikan *First Contentful Paint* (FCP) instan tanpa overhead download JS ratusan kilobyte. Tampilan unik dicapai lewat prinsip desain Editorial Brutalist yang efisien. |

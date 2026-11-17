@@ -11,7 +11,7 @@ Dibuat untuk kebutuhan tugas akhir / UKK RPL dan portofolio magang, web ini meng
 | Teknologi | Peran | Alasan Pemilihan |
 | :--- | :--- | :--- |
 | **Laravel 12 (PHP 8.4)** | Backend Framework | Standar industri untuk web modern; routing ekspresif, ekosistem solid, dan Eloquent ORM yang memudahkan query relasional kompleks. |
-| **MySQL** | Relational Database | Manajemen data terstruktur dengan integritas foreign key untuk buku, relasi penulis/penerbit, sirkulasi peminjaman, dan denda. |
+| **MySQL** | Relational Database | Manajemen data terstruktur dengan integritas foreign key untuk buku, relasi penulis/penerbit, dan siklus peminjaman. |
 | **Tailwind CSS v4** | Styling Engine | Engine CSS utility-first generasi terbaru yang super cepat, memungkinkan implementasi desain Brutalist/Editorial murni tanpa library CSS tambahan. |
 | **Alpine.js** | Micro JS Framework | Interaktivitas komponen UI (modal konfirmasi, dropdown menu, tabs) tetap responsif dan interaktif tanpa overhead bundle JavaScript yang berat. |
 | **Vite** | Frontend Asset Bundler | Hot Module Replacement (HMR) instan dan kompilasi stylesheet ultra-cepat. |
@@ -22,14 +22,12 @@ Dibuat untuk kebutuhan tugas akhir / UKK RPL dan portofolio magang, web ini meng
 
 - 🔄 **Sirkulasi Peminjaman End-to-End**  
   Member dapat mengajukan peminjaman secara mandiri lewat katalog. Admin memvalidasi (setujui / tolak dengan alasan), mencatat tanggal kembali, dan stok buku otomatis tersinkronisasi.
-- 💰 **Kalkulasi Denda Otomatis**  
-  Sistem menghitung hari keterlambatan secara otomatis terhadap tanggal jatuh tempo (*due date*) dan mengalikan dengan tarif denda harian yang fleksibel diatur dari menu pengaturan.
 - 👥 **Role-Based Access Control (RBAC)**  
   Pemisahan akses tegas antara **Pustakawan (Admin)** dan **Anggota (Member)** melalui middleware:
-  - **Admin**: Dashboard statistik, manajemen buku & kategori, approval peminjaman, pencatatan pengembalian, status denda, dan ekspor laporan.
-  - **Member**: Akses katalog publik, detail buku, booking peminjaman, pemantauan status pinjam, serta riwayat denda pribadi.
+  - **Admin**: Dashboard statistik, manajemen buku & kategori, approval peminjaman, pencatatan pengembalian, dan ekspor laporan.
+  - **Member**: Akses katalog publik, detail buku, booking peminjaman, pemantauan status pinjam, serta riwayat peminjaman pribadi.
 - 🧹 **Manajemen Anggota (Nonaktifkan / Hapus Permanen)**  
-  Pustakawan bisa menonaktifkan akun yang bermasalah, atau **menghapus permanen** akun anggota fiktif/tidak valid langsung dari halaman detail anggota. Penghapusan sengaja dibuat ketat: akun hanya boleh dihapus bila **bersih dari riwayat peminjaman maupun denda**. Kalau anggota pernah meminjam atau punya tunggakan, sistem menolak dan menyarankan opsi nonaktifkan — supaya riwayat transaksi perpustakaan tidak hilang begitu saja.
+  Pustakawan bisa menonaktifkan akun yang bermasalah, atau **menghapus permanen** akun anggota fiktif/tidak valid langsung dari halaman detail anggota. Penghapusan sengaja dibuat ketat: akun hanya boleh dihapus bila **bersih dari riwayat peminjaman**. Kalau anggota pernah meminjam, sistem menolak dan menyarankan opsi nonaktifkan — supaya riwayat transaksi perpustakaan tidak hilang begitu saja.
 - 📰 **Desain UI/UX Brutalist & Editorial**  
   Berbeda dari dashboard template Bootstrap konvensional, web ini mengusung estetika editorial surat kabar & gaya brutalisme: border tegas (`border-2 border-black`), kontras tinggi, grid presisi, dan tipografi monospaced/serif yang unik.
 - 📦 **Master Data & Relasi Lengkap**  
@@ -37,7 +35,7 @@ Dibuat untuk kebutuhan tugas akhir / UKK RPL dan portofolio magang, web ini meng
 - 🖼️ **Manajemen Cover Buku (Upload & Storage)**  
   Upload sampul jpg/png/webp (maks 2 MB) langsung dari form admin, disimpan ke disk `public/covers/`. Sistem otomatis menghapus file lama saat cover diganti — dan menghapus file fisik saat buku dihapus — supaya tidak ada *storage leak*. Buku tanpa cover ditampilkan sebagai placeholder kotak kaku bergaris silang (X) yang konsisten.
 - 📊 **Statistik & Audit Log Rapi**  
-  Dashboard admin menyajikan metrik buku aktif, peminjaman pending, buku terlambat, serta total denda tertunggak secara real-time.
+  Dashboard admin menyajikan metrik buku aktif, peminjaman pending, serta buku terlambat secara real-time.
 
 ---
 
@@ -133,18 +131,18 @@ Project ini menerapkan pola **Clean Architecture / Fat Service, Skinny Controlle
 ```
 perpustakaan_tobias/
 ├── app/
-│   ├── Enums/                 # Enum status (BorrowingStatus, FineStatus, UserRole)
+│   ├── Enums/                 # Enum status (BorrowingStatus, UserRole)
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Admin/         # Controller spesifik panel admin (Buku, Sirkulasi, Denda, Laporan)
+│   │   │   ├── Admin/         # Controller spesifik panel admin (Buku, Sirkulasi, Anggota, Laporan)
 │   │   │   ├── Member/        # Controller spesifik panel member (Koleksi, Pinjaman, Profil)
 │   │   │   └── Auth/          # Login, Register, Logout
 │   │   └── Requests/          # Form Request Validation (validasi input terpisah dari controller)
 │   ├── Models/                # Model Eloquent dengan relasi & scope query
 │   └── Services/              # 🧠 Core Business Logic (Service Layer)
-│       ├── BorrowingService.php        # Logic validasi peminjaman, approval, batas waktu & kalkulasi denda
+│       ├── BorrowingService.php        # Logic validasi peminjaman, approval, batas waktu & pengembalian
 │       ├── BookCatalogService.php      # Logic pencarian, filter kategori, dan ketersediaan stok
-│       └── LibrarySettingsService.php  # Konfigurasi tarif denda & durasi pinjam dinamis
+│       └── LibrarySettingsService.php  # Konfigurasi durasi pinjam & batas pinjaman
 ├── database/
 │   ├── migrations/            # Skema tabel database
 │   └── seeders/               # Data dummy realistis (LibrarySeeder)
@@ -160,7 +158,7 @@ perpustakaan_tobias/
 ```
 
 ### Mengapa menggunakan `app/Services/`?
-Alih-alih menumpuk ratusan baris query dan kalkulasi matematika di dalam Controller, seluruh alur peminjaman buku dan hitungan denda dipusatkan di `BorrowingService.php`. Controller hanya bertugas menerima request HTTP, memanggil Service, dan mengembalikan response atau view. Pola ini membuat kode jauh lebih mudah diuji (*testable*) dan minim bug saat ada perubahan aturan perpustakaan.
+Alih-alih menumpuk ratusan baris query dan aturan bisnis di dalam Controller, seluruh alur peminjaman buku dipusatkan di `BorrowingService.php`. Controller hanya bertugas menerima request HTTP, memanggil Service, dan mengembalikan response atau view. Pola ini membuat kode jauh lebih mudah diuji (*testable*) dan minim bug saat ada perubahan aturan perpustakaan.
 
 ---
 

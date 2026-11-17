@@ -54,7 +54,6 @@ class AdminCirculationTest extends TestCase
             ->assertOk()
             ->assertSee($overdue->code)
             ->assertSee('Telat')
-            ->assertSee('Estimasi denda')
             ->assertDontSee($active->code);
     }
 

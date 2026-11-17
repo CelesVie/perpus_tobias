@@ -24,7 +24,8 @@ class MemberController extends Controller
                     ->where('name', 'like', "%{$term}%")
                     ->orWhere('email', 'like', "%{$term}%")))
                 ->withCount(['borrowings as active_loans_count' => fn ($q) => $q->whereIn('status', ['requested', 'approved'])])
-                ->latest()
+                ->latest('created_at')
+                ->orderByDesc('id')
                 ->paginate(12)
                 ->withQueryString(),
             'term' => $term,
@@ -37,8 +38,7 @@ class MemberController extends Controller
 
         return view('admin.members.show', [
             'member' => $member,
-            'borrowings' => $member->borrowings()->with('book')->latest()->paginate(10),
-            'fines' => $member->fines()->with('borrowing.book')->latest()->get(),
+            'borrowings' => $member->borrowings()->with('book')->latest('created_at')->orderByDesc('id')->paginate(10),
         ]);
     }
 

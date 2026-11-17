@@ -29,9 +29,9 @@ class CatalogController extends Controller
             ->when($filters['tahun'] ?? null, fn (Builder $q, int $year) => $q->where('publication_year', $year))
             ->when(($filters['ketersediaan'] ?? null) === 'tersedia', fn (Builder $q) => $q->available())
             ->when(($filters['ketersediaan'] ?? null) === 'dipinjam', fn (Builder $q) => $q->where('available_copies', 0))
-            ->when(($filters['urut'] ?? null) === 'populer', fn (Builder $q) => $q->withCount('borrowings')->orderByDesc('borrowings_count'))
-            ->when(($filters['urut'] ?? null) === 'judul', fn (Builder $q) => $q->orderBy('title'))
-            ->when(blank($filters['urut'] ?? null), fn (Builder $q) => $q->latest())
+            ->when(($filters['urut'] ?? null) === 'populer', fn (Builder $q) => $q->withCount('borrowings')->orderByDesc('borrowings_count')->orderByDesc('id'))
+            ->when(($filters['urut'] ?? null) === 'judul', fn (Builder $q) => $q->orderBy('title')->orderBy('id'))
+            ->when(blank($filters['urut'] ?? null), fn (Builder $q) => $q->latest('created_at')->orderByDesc('id'))
             ->paginate(12)
             ->withQueryString();
 

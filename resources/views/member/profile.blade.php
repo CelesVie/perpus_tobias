@@ -58,9 +58,8 @@
                 <div class="flex justify-between"><dt class="text-muted">Nomor anggota</dt><dd class="font-mono text-xs">#{{ str_pad((string) $user->id, 4, '0', STR_PAD_LEFT) }}</dd></div>
                 <div class="flex justify-between"><dt class="text-muted">Bergabung</dt><dd>{{ $user->joined_at?->translatedFormat('d M Y') ?? '—' }}</dd></div>
                 <div class="flex justify-between"><dt class="text-muted">Pinjaman aktif</dt><dd>{{ $user->activeLoanCount() }}</dd></div>
-                <div class="flex justify-between"><dt class="text-muted">Denda</dt><dd>Rp{{ number_format($user->unpaidFineTotal(), 0, ',', '.') }}</dd></div>
                 <div class="flex justify-between"><dt class="text-muted">Status</dt>
-                    <dd><x-status-badge :status="$user->is_active ? 'paid' : 'unpaid'" /></dd>
+                    <dd><span class="badge {{ $user->is_active ? 'bg-accent-soft text-accent' : 'bg-red-50 text-red-600' }}">{{ $user->is_active ? 'Aktif' : 'Nonaktif' }}</span></dd>
                 </div>
             </dl>
         </aside>

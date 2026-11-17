@@ -41,9 +41,6 @@
                                     <p class="mt-0.5 font-semibold text-red-700">
                                         Telat {{ $borrowing->daysLate() }} hari
                                     </p>
-                                    <p class="text-red-700">
-                                        Estimasi denda Rp{{ number_format($borrowing->daysLate() * $finePerDay, 0, ',', '.') }}
-                                    </p>
                                 @elseif ($borrowing->returned_at)
                                     <p class="mt-0.5 text-muted">Kembali {{ $borrowing->returned_at->translatedFormat('d M Y') }}</p>
                                 @else

@@ -16,8 +16,6 @@ class SettingsRequest extends FormRequest
             'library_email' => ['nullable', 'email', 'max:120'],
             'loan_duration_days' => ['required', 'integer', 'min:1', 'max:90'],
             'max_active_loans' => ['required', 'integer', 'min:1', 'max:10'],
-            'fine_per_day' => ['required', 'integer', 'min:0', 'max:100000'],
-            'max_fine_days' => ['required', 'integer', 'min:1', 'max:365'],
         ];
     }
 }

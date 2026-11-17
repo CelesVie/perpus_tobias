@@ -41,7 +41,7 @@
                         <h2 class="font-display text-lg font-semibold">Hapus akun permanen?</h2>
                         <p class="mt-2 text-sm text-muted">
                             Akun <span class="font-semibold text-ink">{{ $member->name }}</span> akan dihapus dari database dan tidak dapat dikembalikan.
-                            Penghapusan otomatis ditolak bila anggota masih punya riwayat peminjaman atau denda.
+                            Penghapusan otomatis ditolak bila anggota masih punya riwayat peminjaman.
                         </p>
                         <div class="mt-4 flex gap-2">
                             <button type="button" @click="confirmDelete = false" class="btn-outline btn-sm flex-1">Batal</button>
@@ -75,27 +75,6 @@
                         </tbody>
                     </table>
                     <div class="border-t border-line px-4 py-3">{{ $borrowings->links() }}</div>
-                @endif
-            </div>
-
-            <div class="card overflow-x-auto">
-                <div class="border-b border-line px-4 py-3"><h2 class="font-display text-lg font-semibold">Denda</h2></div>
-                @if ($fines->isEmpty())
-                    <p class="p-4 text-sm text-muted">Tidak ada denda tercatat.</p>
-                @else
-                    <table class="table-base min-w-[480px]">
-                        <thead><tr><th>Buku</th><th>Hari</th><th>Jumlah</th><th>Status</th></tr></thead>
-                        <tbody>
-                            @foreach ($fines as $fine)
-                                <tr>
-                                    <td>{{ $fine->borrowing?->book?->title ?? '—' }}</td>
-                                    <td>{{ $fine->days_late }}</td>
-                                    <td class="font-semibold">Rp{{ number_format($fine->amount, 0, ',', '.') }}</td>
-                                    <td><x-status-badge :status="$fine->status->value" /></td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 @endif
             </div>
         </div>

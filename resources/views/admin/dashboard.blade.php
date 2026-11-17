@@ -17,7 +17,7 @@
         <x-stat-card label="Judul buku" :value="number_format($stats['titles'])" icon="book-open" hint="{{ number_format($stats['copies']) }} eksemplar" />
         <x-stat-card label="Anggota terdaftar" :value="number_format($stats['members'])" icon="users" tone="accent" />
         <x-stat-card label="Peminjaman aktif" :value="number_format($stats['active'])" icon="book-marked" tone="accent" :hint="$stats['pending'].' menunggu persetujuan'" />
-        <x-stat-card label="Terlambat" :value="number_format($stats['overdue'])" icon="triangle-alert" :tone="$stats['overdue'] > 0 ? 'danger' : 'default'" hint="Denda belum lunas: Rp{{ number_format($stats['fines'], 0, ',', '.') }}" />
+        <x-stat-card label="Terlambat" :value="number_format($stats['overdue'])" icon="triangle-alert" :tone="$stats['overdue'] > 0 ? 'danger' : 'default'" hint="Perlu ditindaklanjuti di menu pengembalian" />
     </div>
 
     <div class="mt-12 grid gap-10 lg:grid-cols-[1.4fr_0.6fr]">

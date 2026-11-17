@@ -6,7 +6,6 @@ use App\Models\Author;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\Category;
-use App\Models\Fine;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -48,7 +47,6 @@ class AdminAreaTest extends TestCase
             '/admin/members/'.$member->id,
             '/admin/borrowings',
             '/admin/returns',
-            '/admin/fines',
             '/admin/reports',
             '/admin/settings',
         ];
@@ -145,12 +143,10 @@ class AdminAreaTest extends TestCase
             'library_email' => 'halo@pustaka.test',
             'loan_duration_days' => 10,
             'max_active_loans' => 3,
-            'fine_per_day' => 1500,
-            'max_fine_days' => 30,
         ])->assertRedirect();
 
         $this->assertDatabaseHas('settings', ['key' => 'loan_duration_days', 'value' => '10']);
-        $this->assertDatabaseHas('settings', ['key' => 'fine_per_day', 'value' => '1500']);
+        $this->assertDatabaseHas('settings', ['key' => 'max_active_loans', 'value' => '3']);
     }
 
     public function test_report_export_streams_csv(): void
@@ -163,7 +159,7 @@ class AdminAreaTest extends TestCase
         $this->assertStringContainsString('text/csv', $response->headers->get('content-type'));
     }
 
-    public function test_member_history_paginates_fines(): void
+    public function test_member_history_paginates_finished_borrowings(): void
     {
         $member = User::factory()->create();
         $category = Category::factory()->create();
@@ -172,23 +168,19 @@ class AdminAreaTest extends TestCase
                 'title' => 'History Book '.$index,
                 'category_id' => $category->id,
             ]);
-            $borrowing = Borrowing::factory()->create([
+            Borrowing::factory()->returned()->create([
                 'user_id' => $member->id,
                 'book_id' => $book->id,
-            ]);
-            Fine::factory()->create([
-                'user_id' => $member->id,
-                'borrowing_id' => $borrowing->id,
             ]);
         }
 
         $this->actingAs($member)->get(route('member.history'))
             ->assertOk()
-            ->assertViewHas('fines', fn ($fines) => $fines->count() === 10 && $fines->total() === 16);
+            ->assertViewHas('borrowings', fn ($borrowings) => $borrowings->count() === 10 && $borrowings->total() === 16);
 
-        $this->get(route('member.history', ['fines' => 2]))
+        $this->get(route('member.history', ['page' => 2]))
             ->assertOk()
-            ->assertViewHas('fines', fn ($fines) => $fines->count() === 6 && $fines->currentPage() === 2);
+            ->assertViewHas('borrowings', fn ($borrowings) => $borrowings->count() === 6 && $borrowings->currentPage() === 2);
     }
 
     public function test_category_crud_from_admin(): void

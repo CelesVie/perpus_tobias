@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 #[Fillable([
@@ -50,12 +49,6 @@ class Borrowing extends Model
     public function handler(): BelongsTo
     {
         return $this->belongsTo(User::class, 'processed_by');
-    }
-
-    /** @return HasOne<Fine, $this> */
-    public function fine(): HasOne
-    {
-        return $this->hasOne(Fine::class);
     }
 
     public function isOverdue(): bool

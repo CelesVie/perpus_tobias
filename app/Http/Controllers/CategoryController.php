@@ -18,7 +18,7 @@ class CategoryController extends Controller
     {
         return view('public.categories.show', [
             'category' => $category,
-            'books' => $category->books()->with('authors')->latest()->paginate(12),
+            'books' => $category->books()->with('authors')->latest('created_at')->orderByDesc('id')->paginate(12),
         ]);
     }
 }

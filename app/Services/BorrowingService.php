@@ -3,11 +3,9 @@
 namespace App\Services;
 
 use App\Enums\BorrowingStatus;
-use App\Enums\FineStatus;
 use App\Models\ActivityLog;
 use App\Models\Book;
 use App\Models\Borrowing;
-use App\Models\Fine;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -134,13 +132,11 @@ class BorrowingService
     }
 
     /**
-     * Process a return, creating a fine when the loan is late.
-     *
-     * @return array{0: Borrowing, 1: ?Fine}
+     * Process a return: mark the loan finished and restore the copy.
      */
-    public function returnBook(Borrowing $borrowing, User $admin): array
+    public function returnBook(Borrowing $borrowing, User $admin): Borrowing
     {
-        return DB::transaction(function () use ($borrowing, $admin): array {
+        return DB::transaction(function () use ($borrowing, $admin): Borrowing {
             $borrowing = Borrowing::query()->lockForUpdate()->findOrFail($borrowing->id);
 
             if ($borrowing->status !== BorrowingStatus::Approved->value) {
@@ -152,54 +148,19 @@ class BorrowingService
             /** @var Book $book */
             $book = Book::query()->lockForUpdate()->findOrFail($borrowing->book_id);
 
-            $returnedAt = now();
-            $borrowing->returned_at = $returnedAt;
+            $borrowing->returned_at = now();
             $borrowing->status = BorrowingStatus::Returned->value;
-
-            $daysLate = $borrowing->due_at?->startOfDay()->diffInDays($returnedAt->startOfDay(), false) ?? 0;
-            $daysLate = max(0, (int) $daysLate);
-            $daysLate = min($daysLate, Setting::getInt('max_fine_days') ?: $daysLate);
-
             $borrowing->save();
-            $book->increment('available_copies');
 
-            $fine = null;
-            if ($daysLate > 0) {
-                $fine = Fine::query()->create([
-                    'borrowing_id' => $borrowing->id,
-                    'user_id' => $borrowing->user_id,
-                    'days_late' => $daysLate,
-                    'amount' => $daysLate * Setting::getInt('fine_per_day'),
-                    'status' => FineStatus::Unpaid,
-                ]);
-            }
+            $book->increment('available_copies');
 
             ActivityLog::record(
                 'borrowing.returned',
-                "Pengembalian {$borrowing->code} diproses oleh {$admin->name}."
-                .($fine ? " Denda Rp{$fine->amount}." : ' Tepat waktu.'),
+                "Pengembalian {$borrowing->code} diproses oleh {$admin->name}.",
                 $borrowing
             );
 
-            return [$borrowing, $fine];
-        });
-    }
-
-    public function payFine(Fine $fine, User $admin): Fine
-    {
-        return DB::transaction(function () use ($fine, $admin): Fine {
-            $fine = Fine::query()->lockForUpdate()->findOrFail($fine->id);
-
-            if ($fine->status !== FineStatus::Unpaid) {
-                throw ValidationException::withMessages([
-                    'fine' => 'Denda ini sudah dibayar.',
-                ]);
-            }
-
-            $fine->forceFill(['status' => FineStatus::Paid->value, 'paid_at' => now()])->save();
-            ActivityLog::record('fine.paid', "Denda #{$fine->id} ditandai lunas oleh {$admin->name}.", $fine);
-
-            return $fine;
+            return $borrowing;
         });
     }
 
@@ -230,12 +191,6 @@ class BorrowingService
         if ($duplicate) {
             throw ValidationException::withMessages([
                 'book' => 'Anda masih memiliki permohonan atau pinjaman aktif untuk buku ini.',
-            ]);
-        }
-
-        if ($member->unpaidFineTotal() > 0) {
-            throw ValidationException::withMessages([
-                'book' => 'Selesaikan denda yang belum dibayar sebelum meminjam lagi.',
             ]);
         }
     }

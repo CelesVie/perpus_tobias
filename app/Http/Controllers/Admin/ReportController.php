@@ -7,7 +7,6 @@ use App\Http\Requests\Admin\ReportPeriodRequest;
 use App\Models\Book;
 use App\Models\Borrowing;
 use App\Models\Category;
-use App\Models\Fine;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -27,13 +26,13 @@ class ReportController extends Controller
             'summary' => [
                 'requests' => Borrowing::query()->whereBetween('requested_at', [$from, $to])->count(),
                 'returns' => Borrowing::query()->whereBetween('returned_at', [$from, $to])->count(),
-                'fines' => (int) Fine::query()->whereBetween('created_at', [$from, $to])->sum('amount'),
                 'newMembers' => User::query()->where('role', 'member')->whereBetween('created_at', [$from, $to])->count(),
             ],
             'topBooks' => Book::query()
                 ->withCount(['borrowings' => fn ($q) => $q->whereBetween('requested_at', [$from, $to])])
                 ->with('authors')
                 ->orderByDesc('borrowings_count')
+                ->orderByDesc('id')
                 ->take(8)
                 ->get(),
             'byCategory' => Category::query()

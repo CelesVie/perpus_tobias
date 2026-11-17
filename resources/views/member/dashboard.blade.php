@@ -17,8 +17,8 @@
         <x-stat-card label="Pinjaman aktif" :value="$active->count()" icon="book-marked" tone="accent"
             :hint="'dari batas '.$loanLimit.' buku'" />
         <x-stat-card label="Menunggu persetujuan" :value="$pending->count()" icon="clock" tone="warn" />
-        <x-stat-card label="Denda belum dibayar" :value="'Rp'.number_format($unpaidFine, 0, ',', '.')" icon="receipt"
-            :tone="$unpaidFine > 0 ? 'danger' : 'default'" :hint="'Rp'.number_format($finePerDay, 0, ',', '.').' / hari'" />
+        <x-stat-card label="Riwayat selesai" :value="$historyCount" icon="rotate-ccw"
+            :hint="'durasi pinjam '.$loanDays.' hari'" />
     </div>
 
     <section class="mt-12 border-t border-black pt-8">

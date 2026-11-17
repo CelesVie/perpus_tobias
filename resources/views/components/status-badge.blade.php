@@ -7,8 +7,6 @@
         'returned' => ['bg-primary-ghost text-primary border-line', 'Dikembalikan'],
         'rejected' => ['bg-red-50 text-red-700 border-red-200', 'Ditolak'],
         'cancelled' => ['bg-neutral-100 text-muted border-line', 'Dibatalkan'],
-        'unpaid' => ['bg-red-50 text-red-700 border-red-200', 'Belum dibayar'],
-        'paid' => ['bg-accent-soft text-accent border-accent/30', 'Lunas'],
     ];
 
     [$classes, $label] = $map[$status] ?? ['bg-primary-ghost text-muted border-line', ucfirst($status)];

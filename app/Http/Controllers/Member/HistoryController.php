@@ -12,15 +12,11 @@ class HistoryController extends Controller
     {
         return view('member.history', [
             'borrowings' => $request->user()->borrowings()
-                ->with(['book.authors', 'fine'])
+                ->with('book.authors')
                 ->whereIn('status', ['returned', 'rejected', 'cancelled'])
                 ->latest('updated_at')
+                ->orderByDesc('id')
                 ->paginate(10),
-            'fines' => $request->user()->fines()
-                ->with('borrowing.book')
-                ->latest()
-                ->paginate(10, ['*'], 'fines')
-                ->withQueryString(),
         ]);
     }
 }

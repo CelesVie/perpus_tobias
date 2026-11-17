@@ -24,7 +24,8 @@ class BookController extends Controller
             'books' => Book::query()
                 ->with(['authors', 'category'])
                 ->search($term)
-                ->latest()
+                ->latest('created_at')
+                ->orderByDesc('id')
                 ->paginate(10)
                 ->withQueryString(),
             'term' => $term,

@@ -13,8 +13,8 @@
                         siapa pun, dan keanggotaan diberikan gratis.
                     </p>
                     <p class="mt-3 leading-relaxed text-ink/90">
-                        Aplikasi ini dipakai staf untuk mengelola koleksi, menyetujui peminjaman, memproses pengembalian, serta
-                        mencatat denda keterlambatan secara transparan bagi anggota.
+                        Aplikasi ini dipakai staf untuk mengelola koleksi, menyetujui peminjaman, serta
+                        memproses pengembalian buku secara transparan bagi anggota.
                     </p>
                 </section>
 
@@ -24,7 +24,6 @@
                         @foreach ([
                             'Maksimal '.\App\Models\Setting::get('max_active_loans').' peminjaman aktif per anggota.',
                             'Durasi pinjam '.\App\Models\Setting::get('loan_duration_days').' hari sejak permohonan disetujui.',
-                            'Denda Rp'.\App\Models\Setting::get('fine_per_day').' per hari keterlambatan.',
                             'Permohonan baru diproses pustakawan pada jam layanan.',
                             'Satu judul hanya boleh diajukan satu kali selama masih aktif.',
                         ] as $rule)

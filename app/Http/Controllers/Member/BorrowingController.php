@@ -24,7 +24,8 @@ class BorrowingController extends Controller
             'borrowings' => $request->user()->borrowings()
                 ->with('book.authors')
                 ->when($status, fn ($q) => $q->where('status', $status))
-                ->latest()
+                ->latest('created_at')
+                ->orderByDesc('id')
                 ->paginate(10),
             'status' => $status,
         ]);
@@ -35,7 +36,7 @@ class BorrowingController extends Controller
         $this->authorize('view', $borrowing);
 
         return view('member.borrowings.show', [
-            'borrowing' => $borrowing->load(['book.authors', 'book.category', 'fine']),
+            'borrowing' => $borrowing->load(['book.authors', 'book.category']),
         ]);
     }
 

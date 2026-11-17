@@ -15,7 +15,7 @@ class PublisherController extends Controller
     public function index(): View
     {
         return view('admin.publishers.index', [
-            'publishers' => Publisher::query()->withCount('books')->orderBy('name')->paginate(15),
+            'publishers' => Publisher::query()->withCount('books')->orderBy('name')->orderBy('id')->paginate(15),
         ]);
     }
 

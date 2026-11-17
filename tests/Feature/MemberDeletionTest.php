@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Borrowing;
-use App\Models\Fine;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -40,25 +39,6 @@ class MemberDeletionTest extends TestCase
         $this->assertDatabaseHas('users', ['id' => $member->id]);
         $this->assertDatabaseHas('borrowings', ['user_id' => $member->id]);
         $this->assertDatabaseMissing('activity_logs', ['action' => 'member.deleted']);
-    }
-
-    public function test_admin_cannot_delete_a_member_with_a_fine(): void
-    {
-        $admin = User::factory()->admin()->create();
-        $member = User::factory()->create();
-        $borrowing = Borrowing::factory()->returned()->create(['user_id' => $member->id]);
-        Fine::factory()->create([
-            'borrowing_id' => $borrowing->id,
-            'user_id' => $member->id,
-        ]);
-
-        $this->actingAs($admin)
-            ->delete('/admin/members/'.$member->id)
-            ->assertRedirect()
-            ->assertSessionHas('error');
-
-        $this->assertDatabaseHas('users', ['id' => $member->id]);
-        $this->assertDatabaseHas('fines', ['user_id' => $member->id]);
     }
 
     public function test_admin_cannot_delete_another_admin_through_the_endpoint(): void

@@ -58,7 +58,7 @@
                     ['member.dashboard', 'layout-dashboard', 'Dasbor', 'member.dashboard'],
                     ['member.books', 'book-open', 'Katalog', 'member.books*'],
                     ['member.borrowings.index', 'clipboard-list', 'Peminjaman', 'member.borrowings.*'],
-                    ['member.history', 'rotate-ccw', 'Riwayat & denda', 'member.history'],
+                    ['member.history', 'rotate-ccw', 'Riwayat', 'member.history'],
                     ['member.profile.edit', 'user', 'Profil', 'member.profile.*'],
                 ];
             @endphp

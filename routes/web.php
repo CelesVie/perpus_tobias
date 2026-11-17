@@ -76,9 +76,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::patch('/borrowings/{borrowing}/reject', [Admin\BorrowingController::class, 'reject'])->name('borrowings.reject');
     Route::patch('/borrowings/{borrowing}/return', [Admin\BorrowingController::class, 'returnBook'])->name('borrowings.return');
 
-    Route::get('/fines', [Admin\FineController::class, 'index'])->name('fines.index');
-    Route::patch('/fines/{fine}/pay', [Admin\FineController::class, 'pay'])->name('fines.pay');
-
     Route::get('/reports', [Admin\ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/export', [Admin\ReportController::class, 'export'])->name('reports.export');
 

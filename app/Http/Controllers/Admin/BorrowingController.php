@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BorrowingIndexRequest;
 use App\Http\Requests\Admin\RejectBorrowingRequest;
 use App\Models\Borrowing;
-use App\Models\Setting;
 use App\Services\BorrowingService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -25,7 +24,7 @@ class BorrowingController extends Controller
         $term = trim($filters['q'] ?? '');
 
         return view('admin.borrowings.index', [
-            'borrowings' => $this->filtered($status, $term)->latest('requested_at')->paginate(12)->withQueryString(),
+            'borrowings' => $this->filtered($status, $term)->latest('requested_at')->orderByDesc('id')->paginate(12)->withQueryString(),
             'status' => $status,
             'term' => $term,
             'counts' => $this->counts(),
@@ -39,11 +38,10 @@ class BorrowingController extends Controller
         $term = trim($filters['q'] ?? '');
 
         return view('admin.returns.index', [
-            'borrowings' => $this->filtered($status, $term)->orderBy('due_at')->paginate(12)->withQueryString(),
+            'borrowings' => $this->filtered($status, $term)->orderBy('due_at')->orderByDesc('id')->paginate(12)->withQueryString(),
             'status' => $status,
             'term' => $term,
             'counts' => $this->counts(),
-            'finePerDay' => Setting::getInt('fine_per_day'),
         ]);
     }
 
@@ -79,7 +77,7 @@ class BorrowingController extends Controller
     public function show(Borrowing $borrowing): View
     {
         return view('admin.borrowings.show', [
-            'borrowing' => $borrowing->load(['user', 'book.authors', 'book.category', 'handler', 'fine']),
+            'borrowing' => $borrowing->load(['user', 'book.authors', 'book.category', 'handler']),
         ]);
     }
 
@@ -112,14 +110,12 @@ class BorrowingController extends Controller
         $this->authorize('returnBook', $borrowing);
 
         try {
-            [$returned, $fine] = $this->borrowings->returnBook($borrowing, request()->user());
+            $returned = $this->borrowings->returnBook($borrowing, request()->user());
         } catch (ValidationException $exception) {
             return back()->with('error', $exception->validator->errors()->first());
         }
 
         return redirect()->route('admin.borrowings.show', $returned)
-            ->with('status', $fine
-                ? "Pengembalian dicatat. Denda Rp{$fine->amount} diterbitkan."
-                : 'Pengembalian dicatat tepat waktu.');
+            ->with('status', 'Pengembalian dicatat.');
     }
 }

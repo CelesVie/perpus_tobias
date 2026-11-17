@@ -21,7 +21,8 @@ class HomeController extends Controller
 
         $latest = Book::query()
             ->with(['authors', 'category'])
-            ->latest()
+            ->latest('created_at')
+            ->orderByDesc('id')
             ->take(6)
             ->get();
 
@@ -29,6 +30,7 @@ class HomeController extends Controller
             ->withCount('borrowings')
             ->with(['authors', 'category'])
             ->orderByDesc('borrowings_count')
+            ->orderByDesc('id')
             ->take(6)
             ->get();
 

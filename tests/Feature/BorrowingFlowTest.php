@@ -3,10 +3,8 @@
 namespace Tests\Feature;
 
 use App\Enums\BorrowingStatus;
-use App\Enums\FineStatus;
 use App\Models\Book;
 use App\Models\Borrowing;
-use App\Models\Fine;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\BorrowingService;
@@ -78,23 +76,6 @@ class BorrowingFlowTest extends TestCase
 
         $this->actingAs($member)
             ->post(route('member.borrowings.store', $other))
-            ->assertSessionHasErrors('book');
-    }
-
-    public function test_member_with_unpaid_fine_cannot_borrow(): void
-    {
-        $member = User::factory()->create();
-        $returned = Borrowing::factory()->returned()->create(['user_id' => $member->id]);
-        Fine::factory()->create([
-            'borrowing_id' => $returned->id,
-            'user_id' => $member->id,
-            'status' => FineStatus::Unpaid->value,
-        ]);
-
-        $book = Book::factory()->create(['total_copies' => 1, 'available_copies' => 1]);
-
-        $this->actingAs($member)
-            ->post(route('member.borrowings.store', $book))
             ->assertSessionHasErrors('book');
     }
 
@@ -217,7 +198,7 @@ class BorrowingFlowTest extends TestCase
         $this->assertSame('Data anggota tidak lengkap', $fresh->reject_reason);
     }
 
-    public function test_return_on_time_creates_no_fine_and_restores_stock(): void
+    public function test_return_on_time_restores_stock(): void
     {
         $admin = $this->admin();
         $book = Book::factory()->create(['total_copies' => 2, 'available_copies' => 1]);
@@ -231,14 +212,10 @@ class BorrowingFlowTest extends TestCase
         $this->assertSame(BorrowingStatus::Returned->value, $fresh->status);
         $this->assertNotNull($fresh->returned_at);
         $this->assertSame(2, $book->fresh()->available_copies);
-        $this->assertDatabaseCount('fines', 0);
     }
 
-    public function test_late_return_creates_fine_from_settings(): void
+    public function test_return_of_late_loan_still_restores_stock(): void
     {
-        Setting::put('fine_per_day', '1000');
-        Setting::put('max_fine_days', '30');
-
         $admin = $this->admin();
         $book = Book::factory()->create(['total_copies' => 1, 'available_copies' => 0]);
         $borrowing = Borrowing::factory()->create([
@@ -252,46 +229,9 @@ class BorrowingFlowTest extends TestCase
             ->patch(route('admin.borrowings.return', $borrowing))
             ->assertRedirect();
 
-        $fine = $borrowing->fresh()->fine;
-        $this->assertNotNull($fine);
-        $this->assertSame(3, $fine->days_late);
-        $this->assertSame(3000, $fine->amount);
-        $this->assertSame(FineStatus::Unpaid, $fine->status);
-    }
-
-    public function test_fine_can_be_marked_paid(): void
-    {
-        $admin = $this->admin();
-        $borrowing = Borrowing::factory()->returned()->create();
-        $fine = Fine::factory()->create([
-            'borrowing_id' => $borrowing->id,
-            'user_id' => $borrowing->user_id,
-            'status' => FineStatus::Unpaid->value,
-        ]);
-
-        $this->actingAs($admin)
-            ->patch(route('admin.fines.pay', $fine))
-            ->assertRedirect();
-
-        $fresh = $fine->fresh();
-        $this->assertSame(FineStatus::Paid, $fresh->status);
-        $this->assertNotNull($fresh->paid_at);
-    }
-
-    public function test_paid_fine_cannot_be_paid_twice(): void
-    {
-        $admin = $this->admin();
-        $borrowing = Borrowing::factory()->returned()->create();
-        $fine = Fine::factory()->create([
-            'borrowing_id' => $borrowing->id,
-            'user_id' => $borrowing->user_id,
-            'status' => FineStatus::Unpaid,
-        ]);
-        $service = app(BorrowingService::class);
-
-        $service->payFine($fine, $admin);
-        $this->expectException(ValidationException::class);
-
-        $service->payFine($fine->fresh(), $admin);
+        $fresh = $borrowing->fresh();
+        $this->assertSame(BorrowingStatus::Returned->value, $fresh->status);
+        $this->assertNotNull($fresh->returned_at);
+        $this->assertSame(1, $book->fresh()->available_copies);
     }
 }

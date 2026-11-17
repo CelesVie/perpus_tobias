@@ -40,11 +40,9 @@ class DashboardController extends Controller
             'active' => $active,
             'pending' => $pending,
             'historyCount' => $historyCount,
-            'unpaidFine' => $user->unpaidFineTotal(),
             'recommended' => $recommended,
             'loanLimit' => Setting::getInt('max_active_loans'),
             'loanDays' => Setting::getInt('loan_duration_days'),
-            'finePerDay' => Setting::getInt('fine_per_day'),
         ]);
     }
 }
