@@ -65,6 +65,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::delete('/publishers/{publisher:id}', [Admin\PublisherController::class, 'destroy'])->name('publishers.destroy');
 
     Route::get('/members', [Admin\MemberController::class, 'index'])->name('members.index');
+    Route::get('/members/create', [Admin\MemberController::class, 'create'])->name('members.create');
+    Route::post('/members', [Admin\MemberController::class, 'store'])->name('members.store');
     Route::get('/members/{member:id}', [Admin\MemberController::class, 'show'])->name('members.show');
     Route::patch('/members/{member:id}/toggle', [Admin\MemberController::class, 'toggle'])->name('members.toggle');
     Route::delete('/members/{member:id}', [Admin\MemberController::class, 'destroy'])->name('members.destroy');

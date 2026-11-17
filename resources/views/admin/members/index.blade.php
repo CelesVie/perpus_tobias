@@ -1,6 +1,13 @@
 <x-layouts.admin title="Anggota" heading="Anggota">
-    <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Anggota</h1>
-    <p class="eyebrow mt-4">Kelola akun anggota perpustakaan.</p>
+    <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <h1 class="font-display text-5xl font-bold leading-none tracking-tight sm:text-7xl">Anggota</h1>
+            <p class="eyebrow mt-4">Kelola akun anggota perpustakaan.</p>
+        </div>
+        <a href="{{ route('admin.members.create') }}" class="btn-primary btn-sm">
+            <x-icon name="plus" class="size-4" /> Tambah anggota
+        </a>
+    </div>
 
     <form method="GET" class="mt-5 flex max-w-md gap-2">
         <input name="q" value="{{ $term }}" class="field" placeholder="Cari nama atau email" aria-label="Cari anggota">
