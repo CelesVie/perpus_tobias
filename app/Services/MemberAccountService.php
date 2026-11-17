@@ -13,7 +13,7 @@ class MemberAccountService
     /**
      * Daftarkan anggota baru dari panel admin.
      *
-     * @param  array{name: string, email: string, phone?: ?string, password: string}  $data
+     * @param  array{name: string, email: string, phone?: ?string, address?: ?string, password: string}  $data
      */
     public function createMember(array $data): User
     {
@@ -23,6 +23,7 @@ class MemberAccountService
                 'name' => trim($data['name']),
                 'email' => mb_strtolower(trim($data['email'])),
                 'phone' => filled($data['phone'] ?? null) ? trim($data['phone']) : null,
+                'address' => filled($data['address'] ?? null) ? trim($data['address']) : null,
                 'password' => $data['password'],
                 'role' => UserRole::Member,
                 'is_active' => true,
@@ -31,6 +32,39 @@ class MemberAccountService
             ])->save();
 
             ActivityLog::record('member.created', "Akun anggota {$member->name} ditambahkan pustakawan.", $member);
+
+            return $member;
+        });
+    }
+
+    /**
+     * Perbarui data anggota; kata sandi hanya diganti bila diisi.
+     *
+     * @param  array{name: string, email: string, phone?: ?string, address?: ?string, password?: ?string}  $data
+     */
+    public function updateMember(User $member, array $data): User
+    {
+        return DB::transaction(function () use ($member, $data): User {
+            $member = User::query()->lockForUpdate()->findOrFail($member->id);
+
+            if ($member->role !== UserRole::Member) {
+                throw ValidationException::withMessages(['member' => 'Akun ini bukan akun anggota.']);
+            }
+
+            $member->forceFill([
+                'name' => trim($data['name']),
+                'email' => mb_strtolower(trim($data['email'])),
+                'phone' => filled($data['phone'] ?? null) ? trim($data['phone']) : null,
+                'address' => filled($data['address'] ?? null) ? trim($data['address']) : null,
+            ]);
+
+            if (filled($data['password'] ?? null)) {
+                $member->password = $data['password'];
+            }
+
+            $member->save();
+
+            ActivityLog::record('member.updated', "Data akun anggota {$member->name} diperbarui pustakawan.", $member);
 
             return $member;
         });

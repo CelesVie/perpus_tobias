@@ -85,4 +85,116 @@ class AdminMemberTest extends TestCase
         $this->get('/admin/members/create')->assertRedirect(route('login'));
         $this->post('/admin/members', [])->assertRedirect(route('login'));
     }
+
+    public function test_admin_can_update_a_member_without_touching_the_password(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $member = User::factory()->create([
+            'name' => 'Nama Lama',
+            'email' => 'lama@example.test',
+            'password' => 'password-lama',
+        ]);
+
+        $this->actingAs($admin)->get('/admin/members/'.$member->id.'/edit')
+            ->assertOk()
+            ->assertSee('Ubah data anggota')
+            ->assertSee('Kosongkan jika tidak ingin mengubah kata sandi.');
+
+        // Email dibiarkan sama: validasi unique harus mengabaikan baris ini sendiri.
+        $this->actingAs($admin)->put('/admin/members/'.$member->id, [
+            'name' => 'Nama Baru',
+            'email' => 'lama@example.test',
+            'phone' => '081200000000',
+            'address' => 'Jl. Baru No. 1',
+        ])->assertRedirect(route('admin.members.show', $member))
+            ->assertSessionHas('status', 'Data anggota berhasil diperbarui.');
+
+        $member->refresh();
+
+        $this->assertSame('Nama Baru', $member->name);
+        $this->assertSame('lama@example.test', $member->email);
+        $this->assertSame('081200000000', $member->phone);
+        $this->assertSame('Jl. Baru No. 1', $member->address);
+        $this->assertTrue(Hash::check('password-lama', $member->password));
+
+        $this->actingAs($admin)->patch('/admin/members/'.$member->id, [
+            'name' => 'Nama Baru',
+            'email' => 'BARU@Example.TEST',
+        ])->assertRedirect(route('admin.members.show', $member));
+
+        $this->assertSame('baru@example.test', $member->fresh()->email);
+        $this->assertSame(UserRole::Member, $member->fresh()->role);
+        $this->assertDatabaseHas('activity_logs', [
+            'action' => 'member.updated',
+            'subject_id' => $member->id,
+        ]);
+    }
+
+    public function test_admin_can_replace_a_member_password(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $member = User::factory()->create([
+            'email' => 'ganti@example.test',
+            'password' => 'password-lama',
+        ]);
+
+        $this->actingAs($admin)->put('/admin/members/'.$member->id, [
+            'name' => $member->name,
+            'email' => $member->email,
+            'password' => 'password-baru',
+            'password_confirmation' => 'password-baru',
+        ])->assertRedirect(route('admin.members.show', $member));
+
+        $member->refresh();
+
+        $this->assertTrue(Hash::check('password-baru', $member->password));
+        $this->assertFalse(Hash::check('password-lama', $member->password));
+    }
+
+    public function test_update_member_validates_email_conflict_and_password_confirmation(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $member = User::factory()->create(['email' => 'anggota@example.test']);
+        User::factory()->create(['email' => 'lain@example.test']);
+
+        $this->actingAs($admin)->put('/admin/members/'.$member->id, [
+            'name' => $member->name,
+            'email' => 'lain@example.test',
+        ])->assertSessionHasErrors('email');
+
+        $this->actingAs($admin)->put('/admin/members/'.$member->id, [
+            'name' => $member->name,
+            'email' => $member->email,
+            'password' => 'password-baru',
+            'password_confirmation' => 'beda-sendiri',
+        ])->assertSessionHasErrors('password');
+
+        $this->assertSame('anggota@example.test', $member->fresh()->email);
+    }
+
+    public function test_admin_cannot_edit_another_admin_or_be_edited_by_a_member(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $otherAdmin = User::factory()->admin()->create();
+        $member = User::factory()->create();
+
+        $this->actingAs($admin)->get('/admin/members/'.$otherAdmin->id.'/edit')->assertNotFound();
+        $this->actingAs($admin)->put('/admin/members/'.$otherAdmin->id, [
+            'name' => 'Hacked',
+            'email' => $otherAdmin->email,
+        ])->assertNotFound();
+
+        $this->actingAs($member)->get('/admin/members/'.$member->id.'/edit')->assertForbidden();
+        $this->actingAs($member)->put('/admin/members/'.$member->id, [])->assertForbidden();
+
+        $this->assertSame($otherAdmin->name, $otherAdmin->fresh()->name);
+    }
+
+    public function test_guest_is_redirected_to_login_from_the_member_edit_page(): void
+    {
+        $member = User::factory()->create();
+
+        $this->get('/admin/members/'.$member->id.'/edit')->assertRedirect(route('login'));
+        $this->put('/admin/members/'.$member->id, [])->assertRedirect(route('login'));
+    }
 }

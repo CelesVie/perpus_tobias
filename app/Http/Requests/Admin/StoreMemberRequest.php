@@ -14,6 +14,7 @@ class StoreMemberRequest extends FormRequest
             'name' => trim((string) $this->input('name')),
             'email' => Str::lower(trim((string) $this->input('email'))),
             'phone' => filled($this->input('phone')) ? trim((string) $this->input('phone')) : null,
+            'address' => filled($this->input('address')) ? trim((string) $this->input('address')) : null,
         ]);
     }
 
@@ -26,6 +27,7 @@ class StoreMemberRequest extends FormRequest
             'name' => ['required', 'string', 'max:80'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:30'],
+            'address' => ['nullable', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ];
     }
@@ -39,6 +41,7 @@ class StoreMemberRequest extends FormRequest
             'name' => 'nama lengkap',
             'email' => 'alamat email',
             'phone' => 'nomor telepon',
+            'address' => 'alamat',
             'password' => 'kata sandi',
         ];
     }

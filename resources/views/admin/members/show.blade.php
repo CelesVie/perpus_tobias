@@ -22,7 +22,9 @@
                     <dd><span class="badge {{ $member->is_active ? 'bg-accent-soft text-accent' : 'bg-red-50 text-red-600' }}">{{ $member->is_active ? 'Aktif' : 'Nonaktif' }}</span></dd>
                 </div>
             </dl>
-            <form method="POST" action="{{ route('admin.members.toggle', $member) }}" class="mt-4">
+            <a href="{{ route('admin.members.edit', $member) }}" class="btn-outline btn-sm mt-4 w-full">Ubah data</a>
+
+            <form method="POST" action="{{ route('admin.members.toggle', $member) }}" class="mt-2">
                 @csrf @method('PATCH')
                 <button class="btn-outline btn-sm w-full" type="submit">{{ $member->is_active ? 'Nonaktifkan akun' : 'Aktifkan akun' }}</button>
             </form>
