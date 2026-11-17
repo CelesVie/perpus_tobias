@@ -10,6 +10,32 @@ use Illuminate\Validation\ValidationException;
 
 class MemberAccountService
 {
+    /**
+     * Daftarkan anggota baru dari panel admin.
+     *
+     * @param  array{name: string, email: string, phone?: ?string, password: string}  $data
+     */
+    public function createMember(array $data): User
+    {
+        return DB::transaction(function () use ($data): User {
+            $member = new User;
+            $member->forceFill([
+                'name' => trim($data['name']),
+                'email' => mb_strtolower(trim($data['email'])),
+                'phone' => filled($data['phone'] ?? null) ? trim($data['phone']) : null,
+                'password' => $data['password'],
+                'role' => UserRole::Member,
+                'is_active' => true,
+                'email_verified_at' => now(),
+                'joined_at' => now()->toDateString(),
+            ])->save();
+
+            ActivityLog::record('member.created', "Akun anggota {$member->name} ditambahkan pustakawan.", $member);
+
+            return $member;
+        });
+    }
+
     public function toggle(User $member): User
     {
         return DB::transaction(function () use ($member): User {
